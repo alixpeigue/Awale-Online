@@ -3,10 +3,9 @@
 
 #include "server.h"
 
-typedef struct
-{
-   SOCKET sock;
-   char name[BUF_SIZE];
-}Client;
+typedef struct {
+    SOCKET sock;
+    char name[BUF_SIZE];
+} Client;
 
 #endif /* guard */
