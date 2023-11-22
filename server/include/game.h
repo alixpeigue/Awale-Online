@@ -20,8 +20,8 @@ typedef struct {
 } Game;
 
 void game_init(Game *game);
-int board_turn(Game *game, int pos, int side);
-int can_capture(const int8_t *board, int opposite_side, int last_pos);
-GameState game_is_ended(Game game);
+int game_turn(Game *game, int pos, int side);
+int board_can_capture(const int8_t *board, int opposite_side, int last_pos);
+GameState game_is_ended(const Game *game);
 void board_print(const int8_t *board);
 #endif

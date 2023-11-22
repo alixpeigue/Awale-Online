@@ -4,8 +4,8 @@
 #include <string.h>
 
 #include "client.h"
-#include "server.h"
 #include "game.h"
+#include "server.h"
 
 static void init(void) {
 #ifdef WIN32

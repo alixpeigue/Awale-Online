@@ -14,7 +14,7 @@ void game_init(Game *game) {
     }
 }
 
-int can_capture(const int8_t *board, int opposite_side, int last_pos) {
+int board_can_capture(const int8_t *board, int opposite_side, int last_pos) {
     int capturable = 0;
     int offset = (BOARD_SIZE / 2) * opposite_side;
     if ((opposite_side == 1 && last_pos < BOARD_SIZE / 2) ||
@@ -32,13 +32,13 @@ int can_capture(const int8_t *board, int opposite_side, int last_pos) {
     return capturable;
 }
 
-GameState game_is_ended(Game game) {
-    if (game.players[0].captured > BOARD_SIZE * 2) {
+GameState game_is_ended(const Game *game) {
+    if (game->players[0].captured > BOARD_SIZE * 2) {
         return P1WON;
-    } else if (game.players[1].captured > BOARD_SIZE * 2) {
+    } else if (game->players[1].captured > BOARD_SIZE * 2) {
         return P2WON;
-    } else if (game.players[0].captured == BOARD_SIZE * 2 &&
-               game.players[1].captured == BOARD_SIZE * 2) {
+    } else if (game->players[0].captured == BOARD_SIZE * 2 &&
+               game->players[1].captured == BOARD_SIZE * 2) {
         return DRAW;
     }
 
@@ -70,7 +70,7 @@ int board_turn(Game *game, int pos, int side) {
         pos = pos % BOARD_SIZE;
     }
 
-    if (can_capture(game->board, 1 - side, pos)) {
+    if (board_can_capture(game->board, 1 - side, pos)) {
         int offset = (BOARD_SIZE / 2) * (1 - side);
 
         for (int i = pos; i >= offset; --i) {
@@ -94,5 +94,5 @@ void board_print(const int8_t *board) {
     for (int i = 0; i < BOARD_SIZE / 2; ++i) {
         printf("%d ", board[i]);
     }
-    puts("\r\n");
+    puts("");
 }
