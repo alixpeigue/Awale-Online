@@ -1,11 +1,11 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "server.h"
+#include "socket.h"
 
 typedef struct {
-    SOCKET sock;
-    char name[BUF_SIZE];
-} Client;
+   SOCKET sock;
+   char name[1024];
+}Client;
 
 #endif /* guard */

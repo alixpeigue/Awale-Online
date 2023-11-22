@@ -13,13 +13,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h> /* close */
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
-#define closesocket(s) close(s)
-typedef int SOCKET;
-typedef struct sockaddr_in SOCKADDR_IN;
-typedef struct sockaddr SOCKADDR;
-typedef struct in_addr IN_ADDR;
 
 #else
 
@@ -27,13 +20,9 @@ typedef struct in_addr IN_ADDR;
 
 #endif
 
-#define CRLF "\r\n"
-#define PORT 1977
-#define MAX_CLIENTS 100
-
-#define BUF_SIZE 1024
 
 #include "client.h"
+#include "socket.h"
 
 static void init(void);
 static void end(void);
