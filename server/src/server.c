@@ -5,6 +5,7 @@
 
 #include "client.h"
 #include "server.h"
+#include "game.h"
 
 static void init(void) {
 #ifdef WIN32
