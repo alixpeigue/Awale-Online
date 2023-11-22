@@ -1,0 +1,32 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Iserver/include",
+      "-c",
+      "-o",
+      "server/obj/server.o",
+      "server/src/server.c"
+    ],
+    "directory": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix",
+    "file": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/server/src/server.c",
+    "output": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/server/obj/server.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Iclient/include",
+      "-c",
+      "-o",
+      "client/obj/client.o",
+      "client/src/client.c"
+    ],
+    "directory": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix",
+    "file": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/client/src/client.c",
+    "output": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/client/obj/client.o"
+  }
+]

@@ -8,11 +8,11 @@ CLI-OBJ-DIR = $(CLI-DIR)/$(OBJ-DIR)
 SRV-SRC-DIR = $(SRV-DIR)/$(SRC-DIR)
 CLI-SRC-DIR = $(CLI-DIR)/$(SRC-DIR)
 SRV-INCLUDE-DIR = $(SRV-DIR)/$(INCLUDE-DIR)
-CLI-INCLUDE-DIR = $(SRV-DIR)/$(INCLUDE-DIR)
+CLI-INCLUDE-DIR = $(CLI-DIR)/$(INCLUDE-DIR)
 
 # File names
-SRV-OUT = server
-CLI-OUT = client
+SRV-OUT = srv.out
+CLI-OUT = cli.out
 CLI-SRCS = $(wildcard $(CLI-SRC-DIR)/*.c)
 SRV-SRCS = $(wildcard $(SRV-SRC-DIR)/*.c)
 SRV-OBJS = $(SRV-SRCS:$(SRV-SRC-DIR)/%.c=$(SRV-OBJ-DIR)/%.o)
@@ -20,7 +20,7 @@ CLI-OBJS = $(CLI-SRCS:$(CLI-SRC-DIR)/%.c=$(CLI-OBJ-DIR)/%.o)
 
 # Commands
 CC = gcc
-CCFLAGS = -ansi -Wall -Wextra -Dlinux
+CCFLAGS = -Wall -Wextra
 LDFLAGS = 
 DEBUGFLAGS = -DMAP -g
 RM = rm -f
