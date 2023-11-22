@@ -1,0 +1,26 @@
+Client_Serveur
+
+CONNECT <name>
+CREATE_ROOM
+JOIN_ROOM <room_id>
+SPECTATE_ROOM <room_id>
+PLAY <pos (0-5)>
+LEAVE_ROOM
+
+
+Server_Client
+
+CONNECTION_SUCCESSFUL
+CONNECTION_REFUSED <error message>
+ROOM_CREATION_SUCCESSFUL <room_id>
+ROOM_CREATION_REFUSED <room_id>
+JOIN_ROOM_SUCCESSFUL <users,...>
+JOIN_ROOM_REFUSED <error message>
+SPECTATE_ROOM_SUCCESSFUL
+SPECTATE_ROOM_REFUSED <error message>
+PLAYED <board_state> <username>
+GAME_START <pos (1-2)>?
+PLAYER_JOINED_ROOM <username>
+SPECTATOR_JOINED_ROOM <username>
+GAME_STOPPED <winner (0-1-2)>
+
