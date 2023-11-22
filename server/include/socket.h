@@ -1,7 +1,7 @@
 #ifndef SOCKET_H
 #define SOCKET_H
 
-#if defined (linux)
+#if defined(linux)
 
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
