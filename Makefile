@@ -17,6 +17,8 @@ CLI-SRCS = $(wildcard $(CLI-SRC-DIR)/*.c)
 SRV-SRCS = $(wildcard $(SRV-SRC-DIR)/*.c)
 SRV-OBJS = $(SRV-SRCS:$(SRV-SRC-DIR)/%.c=$(SRV-OBJ-DIR)/%.o)
 CLI-OBJS = $(CLI-SRCS:$(CLI-SRC-DIR)/%.c=$(CLI-OBJ-DIR)/%.o)
+SRV-HEADERS = $(wildcard $(SRV-INCLUDE-DIR)/*.h)
+CLI-HEADERS = $(wildcard $(CLI-INCLUDE-DIR)/*.h)
 
 # Commands
 CC = gcc
@@ -27,7 +29,7 @@ RM = rm -f
 ECHO = echo
 LIBRAIRIES =
 
-.PHONY: all clean fclean re run debug
+.PHONY: all clean fclean re run debug format
 
 all: $(SRV-OUT) $(CLI-OUT)
 
@@ -56,5 +58,8 @@ re: clean all
 
 run: $(NAME)
 	./$(NAME)
+
+format:
+	clang-format -i $(SRV-SRCS) $(CLI-SRCS) $(SRV-HEADERS) $(CLI-HEADERS)
 
 -include $(OBJS:.o=.d)
