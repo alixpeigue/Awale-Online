@@ -6,12 +6,7 @@
 #define BOARD_SIZE 12
 #define INITIAL_SEED 4
 
-typedef enum {
-    NOT_ENDED,
-    P1WON,
-    P2WON,
-    DRAW
-} GameState;
+typedef enum { NOT_ENDED, P1WON, P2WON, DRAW } GameState;
 
 typedef struct {
     uint32_t id;
