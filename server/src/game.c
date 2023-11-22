@@ -17,6 +17,7 @@ void game_init(Game *game) {
 int board_can_capture(const int8_t *board, int opposite_side, int last_pos) {
     int capturable = 0;
     int offset = (BOARD_SIZE / 2) * opposite_side;
+
     if ((opposite_side == 1 && last_pos < BOARD_SIZE / 2) ||
         (opposite_side == 0 && last_pos >= BOARD_SIZE / 2)) {
         return capturable;
@@ -55,29 +56,26 @@ int board_turn(Game *game, int pos, int side) {
 
     int seeds_to_sow = game->board[pos];
     game->board[pos] = 0;
-    ++pos;
 
     int i;
-    for (i = pos; i < pos + BOARD_SIZE && seeds_to_sow > 0; ++i) {
-        ++game->board[i % BOARD_SIZE];
-        --seeds_to_sow;
+    for (i = pos + 1; seeds_to_sow > 0; ++i) {
+        if ((i % BOARD_SIZE) != pos) {
+            ++game->board[i % BOARD_SIZE];
+            --seeds_to_sow;
+        }
     }
 
     pos = (i - 1) % BOARD_SIZE;
 
     if (pos < 0) {
-        pos += 2 * BOARD_SIZE;
-        pos = pos % BOARD_SIZE;
+        pos += BOARD_SIZE;
     }
 
     if (board_can_capture(game->board, 1 - side, pos)) {
         int offset = (BOARD_SIZE / 2) * (1 - side);
 
-        for (int i = pos; i >= offset; --i) {
-            if (game->board[i] != 2 && game->board[i] != 3) {
-                break;
-            }
-
+        for (int i = pos;
+             i >= offset && game->board[i] != 2 && game->board[i] != 3; --i) {
             game->players[side].captured += game->board[i];
             game->board[i] = 0;
         }
@@ -90,9 +88,12 @@ void board_print(const int8_t *board) {
     for (int i = BOARD_SIZE - 1; i >= BOARD_SIZE / 2; --i) {
         printf("%d ", board[i]);
     }
+
     puts("");
+
     for (int i = 0; i < BOARD_SIZE / 2; ++i) {
         printf("%d ", board[i]);
     }
+
     puts("");
 }
