@@ -2,9 +2,28 @@
   {
     "arguments": [
       "/usr/bin/gcc",
+      "-pedantic",
       "-Wall",
       "-Wextra",
       "-Iserver/include",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "server/obj/game.o",
+      "server/src/game.c"
+    ],
+    "directory": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix",
+    "file": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/server/src/game.c",
+    "output": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/server/obj/game.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-pedantic",
+      "-Wall",
+      "-Wextra",
+      "-Iserver/include",
+      "-Iinclude",
       "-c",
       "-o",
       "server/obj/server.o",
@@ -17,9 +36,11 @@
   {
     "arguments": [
       "/usr/bin/gcc",
+      "-pedantic",
       "-Wall",
       "-Wextra",
       "-Iclient/include",
+      "-Iinclude",
       "-c",
       "-o",
       "client/obj/client.o",
@@ -28,5 +49,22 @@
     "directory": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix",
     "file": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/client/src/client.c",
     "output": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/client/obj/client.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-pedantic",
+      "-Wall",
+      "-Wextra",
+      "-Iclient/include",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "client/obj/protocol.o",
+      "client/src/protocol.c"
+    ],
+    "directory": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix",
+    "file": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/client/src/protocol.c",
+    "output": "/home/apeigue/Documents/INSA/4IF/PR/Awale-Amar-Alix/client/obj/protocol.o"
   }
 ]

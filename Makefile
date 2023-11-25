@@ -22,14 +22,14 @@ CLI-HEADERS = $(wildcard $(CLI-INCLUDE-DIR)/*.h)
 
 # Commands
 CC = gcc
-CCFLAGS = -pedantic -Wall -Wextra
+CCFLAGS = -pedantic -Wall -Wextra -MD
 LDFLAGS = 
 DEBUGFLAGS = -DMAP -g
 RM = rm -f
 ECHO = echo
 LIBRAIRIES =
 
-.PHONY: all clean fclean re run debug format
+.PHONY: all clean re debug format client server
 
 all: $(SRV-OUT) $(CLI-OUT)
 
@@ -40,10 +40,10 @@ $(CLI-OUT): $(CLI-OBJS)
 	$(CC) $(LDFLAGS) $(CLI-OBJS) -o $(CLI-OUT) $(LIBRAIRIES)
 
 $(SRV-OBJ-DIR)/%.o: $(SRV-SRC-DIR)/%.c | $(SRV-OBJ-DIR)
-	$(CC) $(CCFLAGS) -I$(SRV-INCLUDE-DIR) -c -o $@ $<
+	$(CC) $(CCFLAGS) -I$(SRV-INCLUDE-DIR) -Iinclude -c -o $@ $<
 
 $(CLI-OBJ-DIR)/%.o: $(CLI-SRC-DIR)/%.c | $(CLI-OBJ-DIR)
-	$(CC) $(CCFLAGS) -I$(CLI-INCLUDE-DIR) -c -o $@ $<
+	$(CC) $(CCFLAGS) -I$(CLI-INCLUDE-DIR) -Iinclude -c -o $@ $<
 
 %/$(OBJ-DIR):
 	mkdir -p $@
@@ -56,10 +56,11 @@ clean:
 
 re: clean all
 
-run: $(NAME)
-	./$(NAME)
-
 format:
 	clang-format -i $(SRV-SRCS) $(CLI-SRCS) $(SRV-HEADERS) $(CLI-HEADERS)
 
--include $(OBJS:.o=.d)
+client: $(CLI-OUT)
+
+server: $(SRV-OUT)
+
+-include $(SRV-OBJS:.o=.d) $(CLI-OBJS:.o=.d)

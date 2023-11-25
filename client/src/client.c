@@ -126,36 +126,36 @@ static void write_server(SOCKET sock, const char *buffer) {
 }
 
 int main(int argc, char **argv) {
-    
+
     if (argc != 2) {
         printf("Usage : %s [address] \n", argv[0]);
         return EXIT_FAILURE;
     }
-    
+
     printf("Bienvenue sur le jeu d'Awale ! Quel est votre pseudonyme ? \n> ");
     char buf[BUF_SIZE];
     size_t size = BUF_SIZE;
-    if (getline((char**)&buf, &size, stdin) == -1) {
+    if (getline((char **)&buf, &size, stdin) == -1) {
         printf("No line\n");
     }
 
-    printf("Que voulez-vous faire ?\n 1- Créer une room\n 2- Rejoindre une room\n 3- Observer une room\n> ");
+    printf("Que voulez-vous faire ?\n 1- Créer une room\n 2- Rejoindre une "
+           "room\n 3- Observer une room\n> ");
     int32_t choice = 0;
     scanf("%d", &choice);
-    while(choice < 1 || choice > 3) {
+    while (choice < 1 || choice > 3) {
         printf("Choix invalide !\n> ");
         scanf("%d", &choice);
     }
 
-    switch(choice) {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3: 
-            break;
+    switch (choice) {
+    case 1:
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
     }
-    
 
     init();
 
