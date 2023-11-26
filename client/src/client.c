@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "client.h"
+#include "state.h"
 
 static void init(void) {
 #ifdef WIN32
@@ -126,6 +127,8 @@ static void write_server(SOCKET sock, const char *buffer) {
 }
 
 int main(int argc, char **argv) {
+
+    State current_state = CONNECTING;
 
     if (argc != 2) {
         printf("Usage : %s [address] \n", argv[0]);
