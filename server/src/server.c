@@ -91,6 +91,7 @@ static void app(void) {
             FD_SET(csock, &rdfs);
 
             clients[current_client].sock = csock;
+            clients[current_client].name[0] = '\0';
             nb_clients++;
             fprintf(stderr, "TEST ADD SOCKET\n");
         } else {
