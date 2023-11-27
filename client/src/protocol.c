@@ -1,28 +1,29 @@
 #include "protocol.h"
 #include "client_server_protocol.h"
+#include "server_client_protocol.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-size_t server_client_protocol_read(const uint8_t *buf,
-                                   const Handlers *handlers) {
+size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
+                                   State *state) {
     ServerClientProtocol type = *buf;
     switch (type) {
     case CONNECTION_SUCCESSFUL:
-        handlers->connection_successful();
+        handlers->connection_successful(state);
         break;
     case CONNECTION_REFUSED: {
         const char *message = (const char *)&buf[1];
-        handlers->connection_refused(message);
+        handlers->connection_refused(state, message);
     } break;
     case ROOM_CREATION_SUCCESSFUL: {
         uint32_t room_id = *(uint32_t *)(buf + 1);
-        handlers->room_creation_successful(room_id);
+        handlers->room_creation_successful(state, room_id);
     } break;
     case ROOM_CREATION_REFUSED: {
         const char *message = (const char *)&buf[1];
-        handlers->room_creation_refused(message);
+        handlers->room_creation_refused(state, message);
     } break;
     case JOIN_ROOM_SUCCESSFUL: {
         uint8_t nb_users = buf[1];
@@ -32,32 +33,39 @@ size_t server_client_protocol_read(const uint8_t *buf,
             users[i] = str;
             str += strlen(str) + 1;
         }
-        handlers->join_room_successful(users, nb_users);
+        handlers->join_room_successful(state, nb_users, users);
         free(users);
     } break;
     case JOIN_ROOM_REFUSED: {
         const char *message = (const char *)&buf[1];
-        handlers->join_room_refused(message);
+        handlers->join_room_refused(state, message);
+    } break;
+    case SPECTATE_ROOM_SUCCESSFUL: {
+        handlers->spectate_room_successful(state);
+    } break;
+    case SPECTATE_ROOM_REFUSED: {
+        const char *message = (const char *)&buf[1];
+        handlers->spectate_room_refused(state, message);
     } break;
     case PLAYED: {
         uint8_t played = buf[1];
-        handlers->played(played);
+        handlers->played(state, played);
     } break;
     case GAME_START: {
         uint8_t pos = buf[1];
-        handlers->game_start(pos);
+        handlers->game_start(state, pos);
     } break;
     case PLAYER_JOINED_ROOM: {
         const char *username = (const char *)&buf[1];
-        handlers->player_joined_room(username);
+        handlers->player_joined_room(state, username);
     } break;
     case SPECTATOR_JOINED_ROOM: {
         const char *username = (const char *)&buf[1];
-        handlers->spectator_joined_room(username);
+        handlers->spectator_joined_room(state, username);
     } break;
     case GAME_STOPPED: {
         uint8_t winner = buf[1];
-        handlers->game_stopped(winner);
+        handlers->game_stopped(state, winner);
     } break;
     }
     return 1;
