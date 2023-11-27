@@ -84,7 +84,6 @@ static void app(void) {
             // }
 
             current_client = nb_clients;
-            client_server_protocol_read((const uint8_t *)&buffer[2], &handlers);
 
             /* what is the new maximum fd ? */
             max = csock > max ? csock : max;
@@ -93,7 +92,6 @@ static void app(void) {
 
             clients[current_client].sock = csock;
             nb_clients++;
-            write_client(clients[current_client].sock, buffer, payload_size);
             fprintf(stderr, "TEST ADD SOCKET\n");
         } else {
             int i = 0;
@@ -116,7 +114,7 @@ static void app(void) {
                         // nb_clients,
                         //                             buffer, 1);
                     } else {
-                        client_server_protocol_read((const uint8_t *)&buffer[2],
+                        client_server_protocol_read((const uint8_t *)buffer,
                                                     &handlers);
                         fprintf(stderr, "TEST %s read\n",
                                 clients[current_client].name);

@@ -56,11 +56,16 @@ void client_server_protocol_connect(const char *name) {
     }
 
     if (name_in_use) {
-        fprintf(stderr, "client_server_protocol_connect name (%s, length %lu) in use\n", name, strlen(name));
+        fprintf(stderr,
+                "client_server_protocol_connect name (%s, length %lu) in use\n",
+                name, strlen(name));
         payload_size = server_client_protocol_write_connection_refused(
             (uint8_t *)buffer, "Error: Name already in use.");
     } else {
-        fprintf(stderr, "client_server_protocol_connect name (%s, length %lu) available\n", name, strlen(name));
+        fprintf(
+            stderr,
+            "client_server_protocol_connect name (%s, length %lu) available\n",
+            name, strlen(name));
         strcpy(clients[current_client].name, name);
         payload_size = server_client_protocol_write_connection_successful(
             (uint8_t *)buffer);
