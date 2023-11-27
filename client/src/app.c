@@ -69,7 +69,6 @@ void app(char* address) {
                 break;
             }
             server_client_protocol_read((uint8_t *) buffer, &handlers, &state);
-            puts(buffer);
         }
     }
 

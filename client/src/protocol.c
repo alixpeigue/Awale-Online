@@ -119,3 +119,11 @@ size_t server_client_protocol_write_spectate_room(uint8_t *buf,
     buf[2] = SPECTATE_ROOM;
     return size;
 }
+
+size_t server_client_protocol_write_send_message(uint8_t *buf, const char *message) {
+    uint16_t size = 2 + strlen(message);
+    *(uint16_t *)&buf[0] = size;
+    buf[2] = SEND_MESSAGE;
+    strcpy((char *)&buf[3], message);
+    return size + 2;
+}

@@ -40,6 +40,10 @@ size_t client_server_protocol_read(const uint8_t *buf,
     case LEAVE_ROOM: {
         handlers->leave_room();
     } break;
+    case SEND_MESSAGE: {
+        char *message = (char *)(buf + 1);
+        handlers->send_message(message);
+    } break;
     }
     return 1;
 }
@@ -139,6 +143,8 @@ void handle_spectate_room(uint32_t room_id) {}
 void handle_play(uint8_t play) {}
 
 void handle_leave_room(void) {}
+
+void handke_send_message(const char *message) {}
 
 size_t server_client_protocol_write_connection_successful(uint8_t *buf) {
     uint16_t size = 1;

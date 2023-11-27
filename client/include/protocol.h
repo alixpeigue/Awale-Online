@@ -33,5 +33,6 @@ size_t server_client_protocol_write_spectate_room(uint8_t *buf,
                                                   uint32_t room_id);
 size_t server_client_protocol_write_play(uint8_t *buf, uint8_t pos);
 size_t server_client_protocol_write_leave_room(uint8_t *buf);
+size_t server_client_protocol_write_send_message(uint8_t *buf, const char *message);
 
 #endif

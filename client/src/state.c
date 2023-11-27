@@ -76,7 +76,14 @@ void handle_user_input(State *state, const char *in) {
         size = server_client_protocol_write_play(buf, pos);
         write_server((char *)buf, size);
         set_current_state(state, IN_GAME);
-    }
+    } break;
+    case IN_ROOM:
+    case SPECTATING:
+    case IN_GAME: {
+        size = server_client_protocol_write_send_message(buf, in);
+        write_server((char*)buf, size);
+        
+    } break;
     default:
         printf("Input ignored\n");
     }    
@@ -188,7 +195,7 @@ void handle_game_stopped(State *state, uint8_t winner) {
 }
 
 void handle_message(State *state, const char *username, const char *message) {
-    if (*state == IN_GAME || *state == SPECTATING || *state == IN_GAME || *state == WAITING_PLAY_INPUT) {
+    if (*state == IN_ROOM || *state == SPECTATING || *state == IN_GAME || *state == WAITING_PLAY_INPUT) {
         printf("(%s) %s\n", username, message);
     }
 }

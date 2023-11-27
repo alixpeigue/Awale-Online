@@ -52,7 +52,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# Cache
 .cache/
-
 compile_commands.json
+
+.vscode/
+.idea/

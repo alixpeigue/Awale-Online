@@ -11,6 +11,7 @@ typedef struct {
     void (*spectate_room)(uint32_t room_id);
     void (*play)(uint8_t pos);
     void (*leave_room)(void);
+    void (*send_message)(const char *message);
 } Handlers;
 
 void handlers_init(Handlers *handler);
