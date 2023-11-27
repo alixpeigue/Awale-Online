@@ -15,6 +15,12 @@ void set_current_state(State *state, State new_state) {
     case CONNECTED:
         action_choose();
         break;
+    case WAITING_PLAY:
+        action_play();
+        break;
+    case WAITING_CREATE_ROOM:
+        action_create_room();
+        break;
     }
 }
 
@@ -24,7 +30,8 @@ void handle_user_input(State *state, const char *in) {
     switch (*state) {
     case CONNECTING: {
         printf("Welcome, %s\n", in);
-        server_client_protocol_write_connect(buf, in);
+        size = server_client_protocol_write_connect(buf, in);
+        write_server((char *)buf, size);
         set_current_state(state, WAITING_CONNECTION);
     } break;
     case CONNECTED: {
@@ -35,6 +42,8 @@ void handle_user_input(State *state, const char *in) {
             return;
         }
         switch (choice) {
+        case 1:
+            set_current_state(state, WAITING_CREATE_ROOM);
         case 2:
             set_current_state(state, WAITING_JOIN_ROOM_ID);
             break;
@@ -79,15 +88,16 @@ void handle_connection_refused(State *state, const char *error_message) {
 }
 
 void handle_room_creation_successful(State *state, uint32_t room_id) {
-    if (*state == CONNECTED) {
+    if (*state == WAITING_CREATE_ROOM) {
         printf("Room successfully created with id %x\n", room_id);
         set_current_state(state, IN_ROOM);
     }
 }
 
 void handle_room_creation_refused(State *state, const char *error_message) {
-    if (*state == CONNECTED) {
+    if (*state == WAITING_CREATE_ROOM) {
         printf("Couldn't create room : %s\n", error_message);
+        set_current_state(state, CONNECTED);
     }
 }
 

@@ -10,7 +10,7 @@ void action_connect() {
 }
 
 void action_play() {
-    printf("What do you want to play ?\n");
+    printf("Please enter your next move?\n");
 }
 
 void action_choose() {
@@ -25,19 +25,9 @@ void action_create_room() {
 }
 
 void action_join_room() {
-    uint8_t buf[1024];
-    printf("What room do you want to join ?\n> ");
-    uint32_t room_id;
-    scanf("%x", &room_id);
-    size_t size = server_client_protocol_write_join_room(buf, room_id);
-    write_server((char *)buf, size);
+    printf("What room do you want to join ?\n");
 }
 
 void action_spectate_room() {
-    uint8_t buf[1024];
-    printf("What room do you mant to spectate ?\n> ");
-    uint32_t room_id;
-    scanf("%x", &room_id);
-    size_t size = server_client_protocol_write_spectate_room(buf, room_id);
-    write_server((char *)buf, size);
+    printf("What room do you mant to spectate ?\n");
 }

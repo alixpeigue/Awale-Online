@@ -2,6 +2,7 @@
 #include "protocol.h"
 #include "state.h"
 #include <errno.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -60,7 +61,7 @@ void app(char* address) {
             handle_user_input(&state, buffer);
         } else if (FD_ISSET(sock, &rdfs)) {
             int n = read_server(buffer, 2);
-            int to_read = atoi(buffer);
+            uint16_t to_read = *(uint16_t *) buffer;
             int m = read_server(buffer, to_read);
             /* server down */
             if (n == 0 || m == 0) {
