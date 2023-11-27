@@ -6,6 +6,7 @@ JOIN_ROOM <room_id>
 SPECTATE_ROOM <room_id>
 PLAY <pos (0-5)>
 LEAVE_ROOM
+SEND_MESSAGE <message>
 
 
 Server_Client
@@ -23,4 +24,5 @@ GAME_START <pos (0-1-2)>
 PLAYER_JOINED_ROOM <username>
 SPECTATOR_JOINED_ROOM <username>
 GAME_STOPPED <winner (0-1-2)>
+MESSAGE <username> <message>
 

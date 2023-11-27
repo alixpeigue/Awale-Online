@@ -7,7 +7,8 @@ typedef enum {
     JOIN_ROOM,
     SPECTATE_ROOM,
     PLAY,
-    LEAVE_ROOM  
+    LEAVE_ROOM,
+    SEND_MESSAGE
 } ClientServerProtocol;
 
 #endif

@@ -29,5 +29,5 @@ void action_join_room() {
 }
 
 void action_spectate_room() {
-    printf("What room do you mant to spectate ?\n");
+    printf("What room do you want to spectate ?\n");
 }

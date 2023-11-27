@@ -67,6 +67,11 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
         uint8_t winner = buf[1];
         handlers->game_stopped(state, winner);
     } break;
+    case MESSAGE: {
+        const char* username = (char *)&buf[1];
+        const char* message = (char *)&buf[2+strlen(username)];
+        handlers->message(state, username, message);
+    }
     }
     return 1;
 }

@@ -14,7 +14,8 @@ typedef enum {
     GAME_START,
     PLAYER_JOINED_ROOM,
     SPECTATOR_JOINED_ROOM,
-    GAME_STOPPED
+    GAME_STOPPED,
+    MESSAGE,
 } ServerClientProtocol;
 
 #endif

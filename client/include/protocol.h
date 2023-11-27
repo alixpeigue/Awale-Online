@@ -21,6 +21,7 @@ typedef struct {
     void (*game_stopped)(State *, uint8_t winner);
     void (*spectate_room_refused)(State *, const char *error_message);
     void (*spectate_room_successful)(State *);
+    void (*message)(State*, const char *username, const char *message);
 } Handlers;
 
 size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
