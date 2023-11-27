@@ -18,19 +18,20 @@ void set_current_state(State *state, State new_state) {
     }
 }
 
-void handle_input(State *state, const char *in) {
+void handle_user_input(State *state, const char *in) {
     uint8_t buf[1024];
     size_t size;
     switch (*state) {
     case CONNECTING: {
         printf("Welcome, %s\n", in);
         server_client_protocol_write_connect(buf, in);
-        printf("Goodbye !");
+        set_current_state(state, WAITING_CONNECTION);
     } break;
     case CONNECTED: {
         uint8_t choice = atoi(in);
         if (choice < 1 || choice > 3) {
             printf("Invalid input, must be between 1 and 3\n");
+            set_current_state(state, CONNECTED);
             return;
         }
         switch (choice) {
@@ -42,33 +43,38 @@ void handle_input(State *state, const char *in) {
             break;
         }
     } break;
-    case IN_GAME: {
-        uint8_t played = atoi(in);
-        server_client_protocol_write_play(buf, played);
-    } break;
     case WAITING_JOIN_ROOM_ID: {
         uint32_t room_id = strtol(in, NULL, 16);
         size = server_client_protocol_write_join_room(buf, room_id);
-        write_server((const char *)buf, size);
+        write_server((char *)buf, size);
     } break;
     case WAITING_SPECTATE_ROOM_ID: {
         uint32_t room_id = strtol(in, NULL, 16);
         size = server_client_protocol_write_spectate_room(buf, room_id);
-        write_server((const char *)buf, size);
+        write_server((char *)buf, size);
     } break;
+    case WAITING_PLAY: {
+        uint8_t pos = atoi(in);
+        size = server_client_protocol_write_play(buf, pos);
+        write_server((char *)buf, size);
+        set_current_state(state, IN_GAME);
     }
+    default:
+        printf("Input ignored\n");
+    }    
 }
 
 void handle_connection_successful(State *state) {
-    if (*state == CONNECTING) {
+    if (*state == WAITING_CONNECTION) {
         printf("You are successfully connected !\n");
         set_current_state(state, CONNECTED);
     }
 }
 
 void handle_connection_refused(State *state, const char *error_message) {
-    if (*state == CONNECTING) {
+    if (*state == WAITING_CONNECTION) {
         printf("Connection refused : %s\n", error_message);
+        set_current_state(state, CONNECTING);
     }
 }
 
@@ -119,6 +125,7 @@ void handle_played(State *state, uint8_t pos) {
     if (*state == IN_GAME) {
         printf("Played : %d\n", pos);
         action_play();
+        set_current_state(state, WAITING_PLAY);
 
     } else if (*state == SPECTATING) {
         printf("(Spectating) Played : %d\n", pos);
@@ -128,7 +135,11 @@ void handle_played(State *state, uint8_t pos) {
 void handle_game_start(State *state, uint8_t pos) {
     if (*state == IN_ROOM) {
         printf("You start at position %d", pos);
-        set_current_state(state, IN_GAME);
+        if(pos==1) {
+            set_current_state(state, WAITING_PLAY);
+        } else if (pos==2) {
+            set_current_state(state, IN_GAME);
+        }
     }
 }
 

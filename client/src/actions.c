@@ -6,16 +6,16 @@
 #include <string.h>
 
 void action_connect() {
-    printf("What is your name?\n> ");
+    printf("What is your name?\n");
 }
 
 void action_play() {
-    printf("What do you want to play ?\n> ");
+    printf("What do you want to play ?\n");
 }
 
 void action_choose() {
     printf("What do you want to do ?\n 1 - Create a room\n 2 - Join a room\n 3 "
-           "- Spectate a room\n >");
+           "- Spectate a room\n");
 }
 
 void action_create_room() {

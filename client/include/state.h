@@ -6,18 +6,20 @@
 #include <stdio.h>
 typedef enum {
     CONNECTING,
+    WAITING_CONNECTION,
     CONNECTED,
     WAITING_CREATE_ROOM,
     WAITING_JOIN_ROOM_ID,
     WAITING_SPECTATE_ROOM_ID,
     IN_ROOM,
     IN_GAME,
+    WAITING_PLAY,
     SPECTATING
 } State;
 
 void set_current_state(State *state, State new_state);
 
-void handle_input(State *state, const char *in);
+void handle_user_input(State *state, const char *in);
 
 void handle_connection_successful(State *state);
 

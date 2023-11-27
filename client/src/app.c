@@ -57,7 +57,7 @@ void app(char* address) {
                     buffer[BUF_SIZE - 1] = 0;
                 }
             }
-            handle_input(&state, buffer);
+            handle_user_input(&state, buffer);
         } else if (FD_ISSET(sock, &rdfs)) {
             int n = read_server(buffer, 2);
             int to_read = atoi(buffer);
