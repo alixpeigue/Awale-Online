@@ -144,7 +144,7 @@ void handle_play(uint8_t play) {}
 
 void handle_leave_room(void) {}
 
-void handke_send_message(const char *message) {}
+void handle_send_message(const char *message) {}
 
 size_t server_client_protocol_write_connection_successful(uint8_t *buf) {
     uint16_t size = 1;
