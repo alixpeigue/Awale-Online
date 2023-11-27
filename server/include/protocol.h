@@ -21,7 +21,7 @@ size_t server_client_protocol_write_connection_successful(uint8_t *buf);
 size_t
 server_client_protocol_write_connection_refused(uint8_t *buf,
                                                 const char *error_message);
-size_t server_client_protocol_write_room_creation_successful(uint8_t *buf);
+size_t server_client_protocol_write_room_creation_successful(uint8_t *buf, uint32_t room_id);
 size_t
 server_client_protocol_write_room_creation_refused(uint8_t *buf,
                                                    const char *error_message);

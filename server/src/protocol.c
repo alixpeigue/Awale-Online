@@ -1,18 +1,18 @@
 #include "protocol.h"
 #include "client_server_protocol.h"
+#include "room.h"
 #include "server.h"
 #include "server_client_protocol.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-extern int nb_clients;
 extern int current_client;
+extern int nb_clients;
 extern Client clients[MAX_CLIENTS];
-extern char buffer[BUF_SIZE];
-extern int payload_size;
+extern int nb_rooms;
+extern Room rooms[MAX_ROOMS];
 
 size_t client_server_protocol_read(const uint8_t *buf,
                                    const Handlers *handlers) {
@@ -44,10 +44,12 @@ size_t client_server_protocol_read(const uint8_t *buf,
     return 1;
 }
 
-void client_server_protocol_connect(const char *name) {
+void handle_connect(const char *name) {
+    uint8_t buffer[BUF_SIZE];
     int name_in_use = 0;
-
+    size_t payload_size = 0;
     fprintf(stderr, "client_server_protocol_connect\n");
+
     for (int i = 0; i < nb_clients; ++i) {
         if (strcmp(clients[i].name, name) == 0) {
             name_in_use = 1;
@@ -60,7 +62,7 @@ void client_server_protocol_connect(const char *name) {
                 "client_server_protocol_connect name (%s, length %lu) in use\n",
                 name, strlen(name));
         payload_size = server_client_protocol_write_connection_refused(
-            (uint8_t *)buffer, "Error: Name already in use.");
+            buffer, "Error: Name already in use.");
     } else {
         fprintf(
             stderr,
@@ -68,19 +70,34 @@ void client_server_protocol_connect(const char *name) {
             name, strlen(name));
         strcpy(clients[current_client].name, name);
         payload_size = server_client_protocol_write_connection_successful(
-            (uint8_t *)buffer);
+            buffer);
     }
+
+    write_client(clients[current_client].sock, (char *)buffer, payload_size);
 }
 
-void client_server_protocol_create_room(void) {}
+void handle_create_room(void) {
+    uint8_t buffer[BUF_SIZE];
+    room_init(&rooms[nb_rooms]);
+    
+    Player player;
+    player.id = clients[current_client].sock;
+    strcpy(player.name, clients[current_client].name);
+    player.captured = 0;
+    room_add_player(&rooms[nb_rooms], player);
+    size_t payload_size = server_client_protocol_write_room_creation_successful(buffer, rooms[nb_rooms].id);
+    write_client(clients[current_client].sock, (char *)buffer, payload_size);
 
-void client_server_protocol_join_room(uint32_t room_id) {}
+    ++nb_rooms;
+}
 
-void client_server_protocol_spectate_room(uint32_t room_id) {}
+void handle_join_room(uint32_t room_id) {}
 
-void client_server_protocol_play(uint8_t play) {}
+void handle_spectate_room(uint32_t room_id) {}
 
-void client_server_protocol_leave_room(void) {}
+void handle_play(uint8_t play) {}
+
+void handle_leave_room(void) {}
 
 size_t server_client_protocol_write_connection_successful(uint8_t *buf) {
     uint16_t size = 1;
@@ -99,8 +116,7 @@ server_client_protocol_write_connection_refused(uint8_t *buf,
     return size + 2;
 }
 
-size_t server_client_protocol_write_room_creation_successful(uint8_t *buf) {
-    uint32_t room_id = rand();
+size_t server_client_protocol_write_room_creation_successful(uint8_t *buf, uint32_t room_id) {
     uint16_t size = sizeof(room_id) + 1;
     *(uint16_t *)&buf[0] = size;
     buf[2] = ROOM_CREATION_SUCCESSFUL;
@@ -188,10 +204,10 @@ size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t winner) {
 }
 
 void handlers_init(Handlers *handlers) {
-    handlers->connect = client_server_protocol_connect;
-    handlers->create_room = client_server_protocol_create_room;
-    handlers->join_room = client_server_protocol_join_room;
-    handlers->leave_room = client_server_protocol_leave_room;
-    handlers->play = client_server_protocol_play;
-    handlers->spectate_room = client_server_protocol_spectate_room;
+    handlers->connect = handle_connect;
+    handlers->create_room = handle_create_room;
+    handlers->join_room = handle_join_room;
+    handlers->leave_room = handle_leave_room;
+    handlers->play = handle_play;
+    handlers->spectate_room = handle_spectate_room;
 }

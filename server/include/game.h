@@ -10,7 +10,7 @@ typedef enum { NOT_ENDED, P1WON, P2WON, DRAW } GameState;
 
 typedef struct {
     uint32_t id;
-    char *name;
+    char name[1024];
     int8_t captured;
 } Player;
 
@@ -20,8 +20,9 @@ typedef struct {
 } Game;
 
 void game_init(Game *game);
+void game_add_player(Game *game, Player player);
 int game_turn(Game *game, int pos, int side);
-int board_can_capture(const int8_t *board, int opposite_side, int last_pos);
+int game_board_can_capture(const int8_t *board, int opposite_side, int last_pos);
 GameState game_is_ended(const Game *game);
-void board_print(const int8_t *board);
+void game_board_print(const int8_t *board);
 #endif

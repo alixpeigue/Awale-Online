@@ -6,8 +6,8 @@
 #include <time.h>
 
 #include "client.h"
-#include "game.h"
 #include "protocol.h"
+#include "room.h"
 #include "server.h"
 
 static void init(void) {
@@ -27,11 +27,11 @@ static void end(void) {
 #endif
 }
 
-int nb_clients = 0;
 int current_client = -1;
+int nb_clients = 0;
 Client clients[MAX_CLIENTS];
-char buffer[BUF_SIZE];
-int payload_size;
+int nb_rooms = 0;
+Room rooms[MAX_ROOMS];
 
 static void app(void) {
     SOCKET sock = init_connection();
@@ -41,6 +41,7 @@ static void app(void) {
     Handlers handlers;
     handlers_init(&handlers);
 
+    char buffer[BUF_SIZE];
     fd_set rdfs;
 
     while (1) {
@@ -123,7 +124,6 @@ static void app(void) {
                         /* send_message_to_all_clients(clients, client, actual,
                                                     buffer, 0);
                                                     */
-                        write_client(client.sock, buffer, payload_size);
                         fprintf(stderr, "TEST %s wrote\n",
                                 clients[current_client].name);
                     }
@@ -222,7 +222,7 @@ static int read_client(SOCKET sock, char *buffer) {
     return n;
 }
 
-static void write_client(SOCKET sock, const char *buffer, int size) {
+void write_client(SOCKET sock, const char *buffer, int size) {
     if (send(sock, buffer, size, 0) < 0) {
         perror("send()");
         exit(errno);

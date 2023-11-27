@@ -1,6 +1,7 @@
 #include "game.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 void game_init(Game *game) {
     for (int i = 0; i < BOARD_SIZE; ++i) {
@@ -9,12 +10,19 @@ void game_init(Game *game) {
 
     for (int i = 0; i < 2; ++i) {
         game->players[i].captured = 0;
-        game->players[i].id = -1;
-        game->players[i].name = NULL;
+        game->players[i].id = 0;
+        game->players[i].name[0] = '\0';
     }
 }
 
-int board_can_capture(const int8_t *board, int opposite_side, int last_pos) {
+void game_add_player(Game *game, Player player) {
+    int i = game->players[0].id == 0 ? 0 : 1;
+    game->players[i].captured = 0;
+    game->players[i].id = player.id;
+    strcpy(game->players[i].name, player.name);
+}
+
+int game_board_can_capture(const int8_t *board, int opposite_side, int last_pos) {
     int capturable = 0;
     int offset = (BOARD_SIZE / 2) * opposite_side;
 
@@ -46,7 +54,7 @@ GameState game_is_ended(const Game *game) {
     return NOT_ENDED;
 }
 
-int board_turn(Game *game, int pos, int side) {
+int game_turn(Game *game, int pos, int side) {
     if ((pos < 0 || pos >= BOARD_SIZE) ||
         ((side == 0 && pos >= BOARD_SIZE / 2) ||
          (side == 1 && pos < BOARD_SIZE / 2)) ||
@@ -71,7 +79,7 @@ int board_turn(Game *game, int pos, int side) {
         pos += BOARD_SIZE;
     }
 
-    if (board_can_capture(game->board, 1 - side, pos)) {
+    if (game_board_can_capture(game->board, 1 - side, pos)) {
         int offset = (BOARD_SIZE / 2) * (1 - side);
 
         for (int i = pos;
@@ -84,7 +92,7 @@ int board_turn(Game *game, int pos, int side) {
     return 0;
 }
 
-void board_print(const int8_t *board) {
+void game_board_print(const int8_t *board) {
     for (int i = BOARD_SIZE - 1; i >= BOARD_SIZE / 2; --i) {
         printf("%d ", board[i]);
     }
