@@ -69,8 +69,8 @@ void handle_connect(const char *name) {
             "client_server_protocol_connect name (%s, length %lu) available\n",
             name, strlen(name));
         strcpy(clients[current_client].name, name);
-        payload_size = server_client_protocol_write_connection_successful(
-            buffer);
+        payload_size =
+            server_client_protocol_write_connection_successful(buffer);
     }
 
     write_client(clients[current_client].sock, (char *)buffer, payload_size);
@@ -79,19 +79,60 @@ void handle_connect(const char *name) {
 void handle_create_room(void) {
     uint8_t buffer[BUF_SIZE];
     room_init(&rooms[nb_rooms]);
-    
+
     Player player;
     player.id = clients[current_client].sock;
     strcpy(player.name, clients[current_client].name);
     player.captured = 0;
     room_add_player(&rooms[nb_rooms], player);
-    size_t payload_size = server_client_protocol_write_room_creation_successful(buffer, rooms[nb_rooms].id);
+    size_t payload_size = server_client_protocol_write_room_creation_successful(
+        buffer, rooms[nb_rooms].id);
     write_client(clients[current_client].sock, (char *)buffer, payload_size);
 
     ++nb_rooms;
 }
 
-void handle_join_room(uint32_t room_id) {}
+void handle_join_room(uint32_t room_id) {
+    uint8_t buffer[BUF_SIZE];
+    uint32_t payload_size = 0;
+    int room_found = 0;
+    int room_full = 0;
+
+    int i;
+    for (i = 0; i < nb_rooms; ++i) {
+        if (rooms[i].id == room_id) {
+
+            if (rooms[i].game.players[1].id != 0) {
+                room_full = 1;
+                break;
+            }
+
+            room_found = 1;
+            Player player;
+            player.id = clients[current_client].sock;
+            strcpy(player.name, clients[current_client].name);
+            player.captured = 0;
+            room_add_player(&rooms[i], player);
+            break;
+        }
+    }
+
+    if (room_found) {
+        const char *player_names[2];
+        player_names[0] = rooms[i].game.players[0].name;
+        player_names[1] = rooms[i].game.players[1].name;
+        payload_size = server_client_protocol_write_join_room_successful(buffer, player_names,
+                                                          2);
+    } else if (room_full) {
+        payload_size = server_client_protocol_write_join_room_refused(
+            buffer, "Error: The room is full. Try to spectate instead.");
+    } else {
+        payload_size = server_client_protocol_write_join_room_refused(
+            buffer, "Error: Room not found.");
+    }
+
+    write_client(clients[current_client].sock, (char *)buffer, payload_size);
+}
 
 void handle_spectate_room(uint32_t room_id) {}
 
@@ -116,7 +157,8 @@ server_client_protocol_write_connection_refused(uint8_t *buf,
     return size + 2;
 }
 
-size_t server_client_protocol_write_room_creation_successful(uint8_t *buf, uint32_t room_id) {
+size_t server_client_protocol_write_room_creation_successful(uint8_t *buf,
+                                                             uint32_t room_id) {
     uint16_t size = sizeof(room_id) + 1;
     *(uint16_t *)&buf[0] = size;
     buf[2] = ROOM_CREATION_SUCCESSFUL;
