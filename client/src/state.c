@@ -2,6 +2,7 @@
 #include "actions.h"
 #include "client.h"
 #include "protocol.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -76,7 +77,7 @@ void handle_user_input(State *state, const char *in) {
         uint8_t pos = atoi(in) - 1;
         size = server_client_protocol_write_play(buf, pos);
         write_server((char *)buf, size);
-        set_current_state(state, IN_GAME);
+        set_current_state(state, WAITING_PLAY_ACK);
     } break;
     case IN_ROOM:
     case SPECTATING:
@@ -154,9 +155,11 @@ void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *boar
     if (*state == IN_GAME) {
         action_show_board(s_score, o_score, board);
         set_current_state(state, WAITING_PLAY_INPUT);
-
     } else if (*state == SPECTATING) {
         action_show_board(s_score, o_score, board);
+    } else if (*state == WAITING_PLAY_ACK) {
+        action_show_board(s_score, o_score, board);
+        set_current_state(state, IN_GAME);
     }
 }
 
@@ -195,15 +198,15 @@ void handle_game_stopped(State *state, uint8_t winner) {
     }
 }
 
-void handle_message(State *state, const char *username, const char *message) {
-    if (*state == IN_ROOM || *state == SPECTATING || *state == IN_GAME || *state == WAITING_PLAY_INPUT) {
+void handle_message(State *state, const char *username, const char *message, bool first) {
+    if (*state == IN_ROOM || *state == SPECTATING || *state == IN_GAME || *state == WAITING_PLAY_INPUT || *state == WAITING_PLAY_ACK) {
         printf("(%s) %s\n", username, message);
     }
 }
 
 
 void handle_invalid_play(State *state, const char *message) {
-    if (*state == IN_GAME) {
+    if (*state == WAITING_PLAY_ACK) {
         printf("Invalid move : %s\n", message);
         set_current_state(state, WAITING_PLAY_INPUT);
     }

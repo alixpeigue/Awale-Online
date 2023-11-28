@@ -16,6 +16,7 @@ typedef enum {
     IN_ROOM,
     IN_GAME,
     WAITING_PLAY_INPUT,
+    WAITING_PLAY_ACK,
     SPECTATING
 } State;
 

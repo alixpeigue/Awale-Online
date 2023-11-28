@@ -1,6 +1,7 @@
 #include "actions.h"
 #include "client.h"
 #include "protocol.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
