@@ -110,6 +110,7 @@ size_t server_client_protocol_write_play(uint8_t *buf, uint8_t pos) {
     uint16_t size = sizeof(pos) + 1;
     *(uint16_t *)&buf[0] = size;
     buf[2] = PLAY;
+    buf[3] = pos;
     return size + 2;
 }
 

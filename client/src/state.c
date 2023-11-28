@@ -8,6 +8,7 @@
 
 void set_current_state(State *state, State new_state) {
     *state = new_state;
+    printf("New state: %d\n", new_state);
     switch (new_state) {
     case CONNECTING:
         action_connect();
@@ -161,11 +162,12 @@ void handle_played(State *state, uint8_t pos) {
 }
 
 void handle_game_start(State *state, uint8_t pos) {
+    printf("Game starting ! oui oui"); 
     if (*state == IN_ROOM) {
         printf("You start at position %d", pos);
-        if(pos==1) {
+        if(pos==0) {
             set_current_state(state, WAITING_PLAY_INPUT);
-        } else if (pos==2) {
+        } else if (pos==1) {
             set_current_state(state, IN_GAME);
         }
     }
