@@ -34,14 +34,117 @@ void action_spectate_room() {
 }
 
 void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {
-    printf("Score: %d\n", o_score);
-    for(int i=5; i>=0; --i) {
-        printf("%d ", board[i+6]);
+
+    char *score="Score: ";
+
+    char buf[3];
+    
+    int col_size = 3;
+    int col_nb = 6;
+    int total = col_nb*(col_size+1)+1;
+
+    printf("\n")
+    
+    // first line
+    
+    printf("╭");
+    for(int i = 0; i<total - 2; ++i) {
+        printf("─");
+    }
+    printf("╮\n");
+
+    // First Score
+    
+    snprintf(buf, 2, "%d", o_score);
+    printf("│");
+    printf("%s%s", score, buf);
+    for(int i=0; i<total-2-strlen(score)-strlen(buf); ++i) {
+        printf(" ");
+    }
+    printf("│\n");
+
+    // Sep line
+    
+    printf("├");
+    for(int i=0; i<col_nb-1; ++i) {
+        for(int j=0; j<col_size; ++j) {
+            printf("─");
+        }
+        printf("┬");
+    }
+    for(int j=0; j<col_size; ++j) {
+        printf("─");
+    }
+    printf("┤\n");
+
+    // First array line
+
+    printf("│");
+    for(int i=col_nb-1; i>=0; --i) {
+        snprintf(buf, 2, "%d", board[i+col_nb]);
+        for(int j=0; j<col_size-1-strlen(buf); j++) {
+            printf(" ");
+        }
+        printf("%s │", buf);
     }
     printf("\n");
-    for(int i=0; i<6; ++i) {
-        printf("%d ", board[i]);
+
+    // Middle sep
+
+    printf("├");
+    for(int i=0; i<col_nb-1; ++i) {
+        for(int j=0; j<col_size; ++j) {
+            printf("─");
+        }
+        printf("┼");
+    }
+    for(int j=0; j<col_size; ++j) {
+        printf("─");
+    }
+    printf("┤\n");
+
+    // Second array line
+    
+    printf("│");
+    for(int i=0; i<col_nb; ++i) {
+        snprintf(buf, 2, "%d", board[i]);
+        for(int j=0; j<col_size-1-strlen(buf); j++) {
+            printf(" ");
+        }
+        printf("%s │", buf);
     }
     printf("\n");
-    printf("Score : %d\n", s_score);
+
+    // Second score separator
+    printf("├");
+    for(int i=0; i<col_nb-1; ++i) {
+        for(int j=0; j<col_size; ++j) {
+            printf("─");
+        }
+        printf("┴");
+    }
+    for(int j=0; j<col_size; ++j) {
+        printf("─");
+    }
+    printf("┤\n");
+
+    // Second score line
+    
+    snprintf(buf, 2, "%d", s_score);
+    printf("│");
+    printf("%s%s", score, buf);
+    for(int i=0; i<total-2-strlen(score)-strlen(buf); ++i) {
+        printf(" ");
+    }
+    printf("│\n");
+
+    // Last line
+    
+    printf("╰");
+    for(int i = 0; i<total - 2; ++i) {
+        printf("─");
+    }
+    printf("╯\n");
+    
+    printf("\n");
 }
