@@ -43,7 +43,7 @@ void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {
     int col_nb = 6;
     int total = col_nb*(col_size+1)+1;
 
-    printf("\n")
+    printf("\n");
     
     // first line
     
