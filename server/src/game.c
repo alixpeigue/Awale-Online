@@ -22,7 +22,8 @@ void game_add_player(Game *game, Player player) {
     strcpy(game->players[i].name, player.name);
 }
 
-int game_board_can_capture(const uint8_t *board, int opposite_side, int last_pos) {
+int game_board_can_capture(const uint8_t *board, int opposite_side,
+                           int last_pos) {
     int capturable = 0;
     int offset = (BOARD_SIZE / 2) * opposite_side;
 
@@ -54,12 +55,13 @@ GameState game_is_ended(const Game *game) {
     return NOT_ENDED;
 }
 
-int game_play(Game *game, int pos, int side) {
+PlayResult game_play(Game *game, int pos, int side) {
     if ((pos < 0 || pos >= BOARD_SIZE) ||
         ((side == 0 && pos >= BOARD_SIZE / 2) ||
-         (side == 1 && pos < BOARD_SIZE / 2)) ||
-        game->board[pos] <= 0) {
-        return 1;
+         (side == 1 && pos < BOARD_SIZE / 2))) {
+        return OUT_OF_BOUNDS;
+    } else if (game->board[pos] <= 0) {
+        return EMPTY_HOUSE;
     }
 
     int seeds_to_sow = game->board[pos];
@@ -89,7 +91,7 @@ int game_play(Game *game, int pos, int side) {
         }
     }
 
-    return 0;
+    return VALID_PLAY;
 }
 
 void game_board_print(const int8_t *board) {

@@ -157,16 +157,33 @@ void handle_play(uint8_t play) {
             int player =
                 rooms[i].game.players[0].id == clients[current_client].sock ? 0
                                                                             : 1;
-            room_play(&rooms[i], play, player);
+            PlayResult res = room_play(&rooms[i], play, player);
             uint8_t buffer[1024];
-            size_t payload_size =
-                server_client_protocol_write_played(buffer, 0, &rooms[i].game);
-            write_client(rooms[i].game.players[0].id, (char *)buffer,
-                         payload_size);
-            payload_size =
-                server_client_protocol_write_played(buffer, 1, &rooms[i].game);
-            write_client(rooms[i].game.players[1].id, (char *)buffer,
-                         payload_size);
+            size_t payload_size = 0;
+            if (res == VALID_PLAY) {
+                payload_size = server_client_protocol_write_played(
+                    buffer, 0, &rooms[i].game);
+                write_client(rooms[i].game.players[0].id, (char *)buffer,
+                             payload_size);
+                payload_size = server_client_protocol_write_played(
+                    buffer, 1, &rooms[i].game);
+                write_client(rooms[i].game.players[1].id, (char *)buffer,
+                             payload_size);
+            } else {
+                if (res == OUT_OF_BOUNDS) {
+                    payload_size = server_client_protocol_write_invalid_play(
+                            buffer, "Error: Invalid play.");
+                } else if (res == EMPTY_HOUSE) {
+                    payload_size = server_client_protocol_write_invalid_play(
+                            buffer, "Error: Empty house.");
+                } else {
+                    payload_size = server_client_protocol_write_invalid_play(
+                            buffer, "Unknown error.");
+                }
+
+                write_client(rooms[i].game.players[player].id, (char *)buffer,
+                             payload_size);
+            }
             break;
         }
     }
@@ -239,16 +256,28 @@ server_client_protocol_write_join_room_refused(uint8_t *buf,
     return size + 2;
 }
 
-size_t server_client_protocol_write_played(uint8_t *buf, int side, const Game *game) {
+size_t server_client_protocol_write_played(uint8_t *buf, int side,
+                                           const Game *game) {
     uint16_t size = BOARD_SIZE + 3;
     *(uint16_t *)&buf[0] = size;
     buf[2] = PLAYED;
     buf[3] = game->players[side].captured;
     buf[4] = game->players[1 - side].captured;
 
-    for (int i = 0; i < BOARD_SIZE; ++i) {
-        buf[5 + i] = game->board[(i + side * BOARD_SIZE / 2) % BOARD_SIZE];
+    for (int i = 0, j = BOARD_SIZE - 1; i < BOARD_SIZE && j >= 0; ++i, --j) {
+        buf[5 + i] = game->board[(1 - side) * i + side * j];
     }
+
+    return size + 2;
+}
+
+size_t server_client_protocol_write_invalid_play(uint8_t *buf,
+                                           const char *error_message) {
+    uint16_t size = strlen(error_message) + 2;
+    *(uint16_t *)&buf[0] = size;
+    buf[2] = INVALID_PLAY;
+
+    strcpy((char *)&buf[3], error_message);
 
     return size + 2;
 }
