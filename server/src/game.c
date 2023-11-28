@@ -85,7 +85,7 @@ PlayResult game_play(Game *game, int pos, int side) {
         int offset = (BOARD_SIZE / 2) * (1 - side);
 
         for (int i = pos;
-             i >= offset && game->board[i] != 2 && game->board[i] != 3; --i) {
+             i >= offset && (game->board[i] == 2 || game->board[i] == 3); --i) {
             game->players[side].captured += game->board[i];
             game->board[i] = 0;
         }
