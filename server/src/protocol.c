@@ -4,7 +4,6 @@
 #include "room.h"
 #include "server.h"
 #include "server_client_protocol.h"
-#include <linux/limits.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
