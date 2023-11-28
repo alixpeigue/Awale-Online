@@ -40,5 +40,5 @@ size_t server_client_protocol_write_player_joined_room(uint8_t *buf,
                                                        const char *username);
 size_t server_client_protocol_write_spectator_joined_room(uint8_t *buf,
                                                           const char *username);
-size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t winner);
+size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t draw, const char* winner);
 #endif

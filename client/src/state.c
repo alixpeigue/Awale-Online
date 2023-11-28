@@ -187,12 +187,12 @@ void handle_spectator_joined_room(State *state, const char *username) {
     }
 }
 
-void handle_game_stopped(State *state, uint8_t winner) {
-    if (*state == IN_GAME || *state == SPECTATING || *state == IN_ROOM) {
-        if (winner) {
-            printf("Game ended ! Player %d won\n", winner);
+void handle_game_stopped(State *state, uint8_t draw, const char *winner) {
+    if (*state == IN_GAME || *state == SPECTATING || *state == IN_ROOM || *state == WAITING_PLAY_INPUT) {
+        if (!draw) {
+            printf("Game ended ! %s won\n", winner);
         } else {
-            printf("Room is closed\n");
+            printf("Game ended ! It's a draw !\n");
         }
         set_current_state(state, CONNECTED);
     }

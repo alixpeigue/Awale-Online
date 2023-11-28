@@ -4,6 +4,7 @@
 #include "room.h"
 #include "server.h"
 #include "server_client_protocol.h"
+#include <linux/limits.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -184,6 +185,17 @@ void handle_play(uint8_t play) {
                 write_client(rooms[i].game.players[player_side].id, (char *)buffer,
                              payload_size);
             }
+            GameState gs = game_is_ended(&rooms[i].game);
+            if(gs) {
+                uint8_t draw = gs==DRAW;
+                const char *winner;
+                if(!draw) {
+                    winner = rooms[i].game.players[gs-1].name;
+                }
+                payload_size = server_client_protocol_write_game_stopped(buffer, gs==DRAW, winner);
+                write_client(rooms[i].game.players[0].id, (char *)buffer, payload_size);
+                write_client(rooms[i].game.players[1].id, (char *)buffer, payload_size);
+            }
             break;
         }
     }
@@ -309,11 +321,15 @@ server_client_protocol_write_spectator_joined_room(uint8_t *buf,
     return size + 2;
 }
 
-size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t winner) {
-    uint16_t size = sizeof(winner) + 1;
+size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t draw, const char* winner) {
+    uint16_t size = 1+sizeof(draw);
+    if(!draw){
+        size += 1+strlen(winner);
+        strcpy((char *)&buf[4], winner);
+    }
     *(uint16_t *)&buf[0] = size;
     buf[2] = GAME_STOPPED;
-    *(uint8_t *)&buf[3] = winner;
+    *(uint8_t *)&buf[3] = draw;
     return size + 2;
 }
 

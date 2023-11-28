@@ -18,7 +18,7 @@ typedef struct {
     void (*game_start)(State *, uint8_t pos);
     void (*player_joined_room)(State *, const char *username);
     void (*spectator_joined_room)(State *, const char *username);
-    void (*game_stopped)(State *, uint8_t winner);
+    void (*game_stopped)(State *, uint8_t draw, const char *winner);
     void (*spectate_room_refused)(State *, const char *error_message);
     void (*spectate_room_successful)(State *);
     void (*message)(State*, const char *username, const char *message);

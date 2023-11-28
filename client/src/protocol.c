@@ -66,8 +66,9 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
         handlers->spectator_joined_room(state, username);
     } break;
     case GAME_STOPPED: {
-        uint8_t winner = buf[1];
-        handlers->game_stopped(state, winner);
+        uint8_t draw = buf[1];
+        const char * winner = (char *)&buf[2];
+        handlers->game_stopped(state, draw, winner);
     } break;
     case MESSAGE: {
         const char* username = (char *)&buf[1];
