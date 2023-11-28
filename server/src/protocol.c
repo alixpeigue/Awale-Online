@@ -160,7 +160,7 @@ void handle_play(uint8_t play) {
             uint8_t buffer[1024];
             size_t payload_size =
                 server_client_protocol_write_played(buffer, play);
-            write_client(clients[current_client].sock, (char *)buffer,
+            write_client(rooms[i].game.players[1 - player].id, (char *)buffer,
                          payload_size);
             break;
         }
