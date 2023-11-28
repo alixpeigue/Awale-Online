@@ -154,10 +154,10 @@ void handle_spectate_room(uint32_t room_id) {}
 void handle_play(uint8_t play) {
     for (int i = 0; i < nb_rooms; ++i) {
         if (clients[current_client].room_id == rooms[i].id) {
-            int player =
+            int player_side =
                 rooms[i].game.players[0].id == clients[current_client].sock ? 0
                                                                             : 1;
-            PlayResult res = room_play(&rooms[i], play, player);
+            PlayResult res = room_play(&rooms[i], player_side * BOARD_SIZE / 2 + play, player_side);
             uint8_t buffer[1024];
             size_t payload_size = 0;
             if (res == VALID_PLAY) {
@@ -181,7 +181,7 @@ void handle_play(uint8_t play) {
                             buffer, "Unknown error.");
                 }
 
-                write_client(rooms[i].game.players[player].id, (char *)buffer,
+                write_client(rooms[i].game.players[player_side].id, (char *)buffer,
                              payload_size);
             }
             break;
