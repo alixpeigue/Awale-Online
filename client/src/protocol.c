@@ -48,8 +48,10 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
         handlers->spectate_room_refused(state, message);
     } break;
     case PLAYED: {
-        uint8_t played = buf[1];
-        handlers->played(state, played);
+        uint8_t s_score = buf[1];
+        uint8_t o_score = buf[2];
+        uint8_t *board = (uint8_t *)&buf[3];
+        handlers->played(state, s_score, o_score, board);
     } break;
     case GAME_START: {
         uint8_t pos = buf[1];
@@ -72,6 +74,10 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
         const char* message = (char *)&buf[2+strlen(username)];
         handlers->message(state, username, message);
     }
+    case INVALID_PLAY: {
+        const char * message = (char *)&buf[1];
+        handlers->invalid_play(state, message);
+    } break;
     }
     return 1;
 }

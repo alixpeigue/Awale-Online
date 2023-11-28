@@ -150,7 +150,7 @@ void handle_spectate_room_refused(State *state, const char *error_message) {
     }
 }
 
-void handle_played(State *state, uint8_t pos) {
+void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *board) {
     if (*state == IN_GAME) {
         printf("Played : %d\n", pos+1);
         set_current_state(state, WAITING_PLAY_INPUT);
@@ -198,5 +198,13 @@ void handle_game_stopped(State *state, uint8_t winner) {
 void handle_message(State *state, const char *username, const char *message) {
     if (*state == IN_ROOM || *state == SPECTATING || *state == IN_GAME || *state == WAITING_PLAY_INPUT) {
         printf("(%s) %s\n", username, message);
+    }
+}
+
+
+void handle_invalid_play(State *state, const char *message) {
+    if (*state == IN_GAME) {
+        printf("Invalid move : %s\n", message);
+        set_current_state(state, WAITING_PLAY_INPUT);
     }
 }

@@ -31,3 +31,16 @@ void action_join_room() {
 void action_spectate_room() {
     printf("What room do you want to spectate ?\n");
 }
+
+void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {
+    printf("Score: %d\n", o_score);
+    for(int i=0; i<6; i++) {
+        printf("%d ", board[i+6]);
+    }
+    printf("\n");
+    for(int i=0; i<6; i++) {
+        printf("%d ", board[i]);
+    }
+    printf("\n");
+    printf("Score : %d\n", s_score);
+}

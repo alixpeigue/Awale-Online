@@ -19,10 +19,11 @@ JOIN_ROOM_SUCCESSFUL nb_users <users,...>
 JOIN_ROOM_REFUSED <error message>
 SPECTATE_ROOM_SUCCESSFUL
 SPECTATE_ROOM_REFUSED <error message>
-PLAYED <board_state> <username>
+PLAYED <your_score> <other_score> <board_state>
 GAME_START <pos (0-1-2)>
 PLAYER_JOINED_ROOM <username>
 SPECTATOR_JOINED_ROOM <username>
 GAME_STOPPED <winner (0-1-2)>
 MESSAGE <username> <message>
+INVALID_PLAY <message>
 

@@ -40,7 +40,7 @@ void handle_spectate_room_successful(State *state);
 
 void handle_spectate_room_refused(State *state, const char *error_message);
 
-void handle_played(State *state, uint8_t pos);
+void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *board);
 
 void handle_game_start(State *state, uint8_t pos);
 
@@ -49,5 +49,7 @@ void handle_player_joined_room(State *state, const char *username);
 void handle_spectator_joined_room(State *state, const char *username);
 
 void handle_game_stopped(State *state, uint8_t winner);
+
+void handle_invalid_play(State *state, const char *message);
 
 #endif
