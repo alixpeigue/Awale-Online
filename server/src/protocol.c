@@ -185,17 +185,18 @@ server_client_protocol_write_room_creation_refused(uint8_t *buf,
 size_t server_client_protocol_write_join_room_successful(uint8_t *buf,
                                                          const char **users,
                                                          uint8_t nb_users) {
-    uint16_t size = 1;
+    uint16_t size = 4;
+    buf[2] = JOIN_ROOM_SUCCESSFUL;
+    *(uint8_t *)&buf[3] = nb_users;
 
     for (int i = 0; i < nb_users; ++i) {
-        strcpy((char *)&buf[size + 3], users[i]);
+        strcpy((char *)&buf[size], users[i]);
 
         size += strlen(users[i]) + 1;
     }
 
     *(uint16_t *)&buf[0] = size;
-    buf[2] = JOIN_ROOM_SUCCESSFUL;
-    return size + 2;
+    return size;
 }
 
 size_t

@@ -122,7 +122,7 @@ void handle_join_room_successful(State *state, uint8_t nb_users,
     if (*state == WAITING_JOIN_ROOM_RESPONSE) {
         printf("Room joined\nUsers in room spectating room : \n");
         for (uint8_t i = 0; i < nb_users; ++i) {
-            printf(" - %s\n", users[0]);
+            printf(" - %s\n", users[i]);
         }
         set_current_state(state, IN_ROOM);
     }

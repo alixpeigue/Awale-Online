@@ -28,7 +28,7 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
     case JOIN_ROOM_SUCCESSFUL: {
         uint8_t nb_users = buf[1];
         const char **users = calloc(nb_users, sizeof(char *));
-        const char *str = (const char *)&buf[1];
+        const char *str = (const char *)&buf[2];
         for (uint32_t i = 0; i < nb_users; ++i) {
             users[i] = str;
             str += strlen(str) + 1;
