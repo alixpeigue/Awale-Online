@@ -21,7 +21,7 @@ typedef struct {
 
 void game_init(Game *game);
 void game_add_player(Game *game, Player player);
-int game_turn(Game *game, int pos, int side);
+int game_play(Game *game, int pos, int side);
 int game_board_can_capture(const int8_t *board, int opposite_side, int last_pos);
 GameState game_is_ended(const Game *game);
 void game_board_print(const int8_t *board);

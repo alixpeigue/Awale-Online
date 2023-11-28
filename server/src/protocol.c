@@ -86,6 +86,7 @@ void handle_create_room(void) {
 
     Player player;
     player.id = clients[current_client].sock;
+    clients[current_client].room_id = rooms[nb_rooms].id;
     strcpy(player.name, clients[current_client].name);
     player.captured = 0;
     room_add_player(&rooms[nb_rooms], player);
@@ -125,22 +126,46 @@ void handle_join_room(uint32_t room_id) {
         const char *player_names[2];
         player_names[0] = rooms[i].game.players[0].name;
         player_names[1] = rooms[i].game.players[1].name;
-        payload_size = server_client_protocol_write_join_room_successful(buffer, player_names,
-                                                          2);
+        clients[current_client].room_id = room_id;
+        payload_size = server_client_protocol_write_join_room_successful(
+            buffer, player_names, 2);
+        write_client(clients[current_client].sock, (char *)buffer,
+                     payload_size);
+        payload_size = server_client_protocol_write_game_start(buffer, 0);
+        write_client(rooms[i].game.players[0].id, (char *)buffer, payload_size);
+        payload_size = server_client_protocol_write_game_start(buffer, 1);
+        write_client(rooms[i].game.players[1].id, (char *)buffer, payload_size);
     } else if (room_full) {
         payload_size = server_client_protocol_write_join_room_refused(
             buffer, "Error: The room is full. Try to spectate instead.");
+        write_client(clients[current_client].sock, (char *)buffer,
+                     payload_size);
     } else {
         payload_size = server_client_protocol_write_join_room_refused(
             buffer, "Error: Room not found.");
+        write_client(clients[current_client].sock, (char *)buffer,
+                     payload_size);
     }
-
-    write_client(clients[current_client].sock, (char *)buffer, payload_size);
 }
 
 void handle_spectate_room(uint32_t room_id) {}
 
-void handle_play(uint8_t play) {}
+void handle_play(uint8_t play) {
+    for (int i = 0; i < nb_rooms; ++i) {
+        if (clients[current_client].room_id == rooms[i].id) {
+            int player =
+                rooms[i].game.players[0].id == clients[current_client].sock ? 0
+                                                                            : 1;
+            room_play(&rooms[i], play, player);
+            uint8_t buffer[1024];
+            size_t payload_size =
+                server_client_protocol_write_played(buffer, play);
+            write_client(clients[current_client].sock, (char *)buffer,
+                         payload_size);
+            break;
+        }
+    }
+}
 
 void handle_leave_room(void) {}
 

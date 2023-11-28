@@ -54,7 +54,7 @@ GameState game_is_ended(const Game *game) {
     return NOT_ENDED;
 }
 
-int game_turn(Game *game, int pos, int side) {
+int game_play(Game *game, int pos, int side) {
     if ((pos < 0 || pos >= BOARD_SIZE) ||
         ((side == 0 && pos >= BOARD_SIZE / 2) ||
          (side == 1 && pos < BOARD_SIZE / 2)) ||

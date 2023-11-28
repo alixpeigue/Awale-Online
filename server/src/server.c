@@ -93,6 +93,7 @@ static void app(void) {
 
             clients[current_client].sock = csock;
             clients[current_client].name[0] = '\0';
+            clients[current_client].room_id = 0;
             nb_clients++;
             fprintf(stderr, "TEST ADD SOCKET\n");
         } else {
