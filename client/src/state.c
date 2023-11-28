@@ -152,11 +152,11 @@ void handle_spectate_room_refused(State *state, const char *error_message) {
 
 void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *board) {
     if (*state == IN_GAME) {
-        printf("Played : %d\n", pos+1);
+        action_show_board(s_score, o_score, board);
         set_current_state(state, WAITING_PLAY_INPUT);
 
     } else if (*state == SPECTATING) {
-        printf("(Spectating) Played : %d\n", pos);
+        action_show_board(s_score, o_score, board);
     }
 }
 
