@@ -340,4 +340,5 @@ void handlers_init(Handlers *handlers) {
     handlers->leave_room = handle_leave_room;
     handlers->play = handle_play;
     handlers->spectate_room = handle_spectate_room;
+    handlers->send_message = handle_send_message;
 }
