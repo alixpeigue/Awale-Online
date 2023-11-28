@@ -152,7 +152,7 @@ void handle_spectate_room_refused(State *state, const char *error_message) {
 
 void handle_played(State *state, uint8_t pos) {
     if (*state == IN_GAME) {
-        printf("Played : %d\n", pos);
+        printf("Played : %d\n", pos+1);
         set_current_state(state, WAITING_PLAY_INPUT);
 
     } else if (*state == SPECTATING) {
