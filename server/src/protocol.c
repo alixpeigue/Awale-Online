@@ -264,8 +264,8 @@ size_t server_client_protocol_write_played(uint8_t *buf, int side,
     buf[3] = game->players[side].captured;
     buf[4] = game->players[1 - side].captured;
 
-    for (int i = 0, j = BOARD_SIZE - 1; i < BOARD_SIZE && j >= 0; ++i, --j) {
-        buf[5 + i] = game->board[(1 - side) * i + side * j];
+    for(int i=0; i<BOARD_SIZE; ++i) {
+        buf[5+i] = game->board[(i+BOARD_SIZE/2*side) % BOARD_SIZE];
     }
 
     return size + 2;
