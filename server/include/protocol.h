@@ -1,6 +1,7 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+#include "game.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -32,7 +33,7 @@ size_t server_client_protocol_write_join_room_successful(uint8_t *buf,
 size_t
 server_client_protocol_write_join_room_refused(uint8_t *buf,
                                                const char *error_message);
-size_t server_client_protocol_write_played(uint8_t *buf, uint8_t pos);
+size_t server_client_protocol_write_played(uint8_t *buf, int side, const Game *game);
 size_t server_client_protocol_write_game_start(uint8_t *buf, uint8_t side);
 size_t server_client_protocol_write_player_joined_room(uint8_t *buf,
                                                        const char *username);

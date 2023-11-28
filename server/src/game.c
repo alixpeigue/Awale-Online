@@ -22,7 +22,7 @@ void game_add_player(Game *game, Player player) {
     strcpy(game->players[i].name, player.name);
 }
 
-int game_board_can_capture(const int8_t *board, int opposite_side, int last_pos) {
+int game_board_can_capture(const uint8_t *board, int opposite_side, int last_pos) {
     int capturable = 0;
     int offset = (BOARD_SIZE / 2) * opposite_side;
 

@@ -1,5 +1,6 @@
 #include "protocol.h"
 #include "client_server_protocol.h"
+#include "game.h"
 #include "room.h"
 #include "server.h"
 #include "server_client_protocol.h"
@@ -159,8 +160,12 @@ void handle_play(uint8_t play) {
             room_play(&rooms[i], play, player);
             uint8_t buffer[1024];
             size_t payload_size =
-                server_client_protocol_write_played(buffer, play);
-            write_client(rooms[i].game.players[1 - player].id, (char *)buffer,
+                server_client_protocol_write_played(buffer, 0, &rooms[i].game);
+            write_client(rooms[i].game.players[0].id, (char *)buffer,
+                         payload_size);
+            payload_size =
+                server_client_protocol_write_played(buffer, 1, &rooms[i].game);
+            write_client(rooms[i].game.players[1].id, (char *)buffer,
                          payload_size);
             break;
         }
@@ -234,11 +239,17 @@ server_client_protocol_write_join_room_refused(uint8_t *buf,
     return size + 2;
 }
 
-size_t server_client_protocol_write_played(uint8_t *buf, uint8_t pos) {
-    uint16_t size = sizeof(pos) + 1;
+size_t server_client_protocol_write_played(uint8_t *buf, int side, const Game *game) {
+    uint16_t size = BOARD_SIZE + 3;
     *(uint16_t *)&buf[0] = size;
     buf[2] = PLAYED;
-    *(uint8_t *)&buf[3] = pos;
+    buf[3] = game->players[side].captured;
+    buf[4] = game->players[1 - side].captured;
+
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        buf[5 + i] = game->board[(i + side * BOARD_SIZE / 2) % BOARD_SIZE];
+    }
+
     return size + 2;
 }
 
