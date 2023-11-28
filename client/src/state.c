@@ -73,7 +73,7 @@ void handle_user_input(State *state, const char *in) {
         set_current_state(state, WAITING_SPECTATE_ROOM_RESPONSE);
     } break;
     case WAITING_PLAY_INPUT: {
-        uint8_t pos = atoi(in);
+        uint8_t pos = atoi(in) - 1;
         size = server_client_protocol_write_play(buf, pos);
         write_server((char *)buf, size);
         set_current_state(state, IN_GAME);
@@ -153,7 +153,6 @@ void handle_spectate_room_refused(State *state, const char *error_message) {
 void handle_played(State *state, uint8_t pos) {
     if (*state == IN_GAME) {
         printf("Played : %d\n", pos);
-        action_play();
         set_current_state(state, WAITING_PLAY_INPUT);
 
     } else if (*state == SPECTATING) {
