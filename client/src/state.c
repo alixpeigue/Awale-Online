@@ -29,6 +29,9 @@ void set_current_state(State *state, State new_state) {
     case WAITING_SPECTATE_ROOM_INPUT:
         action_spectate_room();
         break;
+    case WAITING_BIO_INPUT:
+        action_bio();
+        break;
     }
 }
 
@@ -44,11 +47,6 @@ void handle_user_input(State *state, const char *in) {
     } break;
     case CONNECTED: {
         uint8_t choice = atoi(in);
-        if (choice < 1 || choice > 3) {
-            printf("Invalid input, must be between 1 and 3\n");
-            set_current_state(state, CONNECTED);
-            return;
-        }
         switch (choice) {
         case 1:
             set_current_state(state, WAITING_CREATE_ROOM_RESPONSE);
@@ -62,6 +60,9 @@ void handle_user_input(State *state, const char *in) {
         case 4:
             set_current_state(state, WAITING_BIO_INPUT);
             break;
+        default:
+            printf("Invalid input, must be between 1 and 4\n");
+            set_current_state(state, CONNECTED);
         }
     } break;
     case WAITING_JOIN_ROOM_INPUT: {
@@ -80,7 +81,7 @@ void handle_user_input(State *state, const char *in) {
         size = server_client_protocol_write_set_biography(buf, in);
         write_server((char *)buf, size);
         set_current_state(state, CONNECTED);
-    }
+    } break;
     case WAITING_PLAY_INPUT: {
         char * endptr;
         uint8_t pos = strtol(in, &endptr ,10) - 1;
