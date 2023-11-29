@@ -149,17 +149,14 @@ void handle_join_room(uint32_t room_id, uint8_t spectate) {
         write_client(clients[current_client].sock, (char *)buffer,
                      payload_size);
 
-        for (int j = 0; j < rooms[i].game.nb_players; ++j) {
-            payload_size = server_client_protocol_write_game_start(buffer, j);
-            write_client(rooms[i].game.players[j].id, (char *)buffer,
-                         payload_size);
+        if (rooms[i].game.nb_players >= 2) {
+            for (int j = 0; j < rooms[i].game.nb_players; ++j) {
+                payload_size = server_client_protocol_write_game_start(buffer, j);
+                write_client(rooms[i].game.players[j].id, (char *)buffer,
+                        payload_size);
+            }
         }
 
-        for (int j = 2; j < rooms[i].game.nb_spectators + 2; ++j) {
-            payload_size = server_client_protocol_write_game_start(buffer, j);
-            write_client(rooms[i].game.players[j].id, (char *)buffer,
-                         payload_size);
-        }
     } else if (room_full) {
         payload_size = server_client_protocol_write_join_room_refused(
             buffer, "Error: The room is full. Try to spectate instead.");
@@ -184,14 +181,20 @@ void handle_play(uint8_t play) {
             uint8_t buffer[1024];
             size_t payload_size = 0;
             if (res == VALID_PLAY) {
-                payload_size = server_client_protocol_write_played(
-                    buffer, 0, &rooms[i].game);
-                write_client(rooms[i].game.players[0].id, (char *)buffer,
-                             payload_size);
-                payload_size = server_client_protocol_write_played(
-                    buffer, 1, &rooms[i].game);
-                write_client(rooms[i].game.players[1].id, (char *)buffer,
-                             payload_size);
+
+                for (int j = 0; j < rooms[i].game.nb_players; ++j) {
+                    payload_size = server_client_protocol_write_played(
+                            buffer, j, &rooms[i].game);
+                    write_client(rooms[i].game.players[j].id, (char *)buffer,
+                            payload_size);
+                }
+
+                for (int j = 0; j < rooms[i].game.nb_spectators; ++j) {
+                    payload_size = server_client_protocol_write_played(
+                            buffer, 0, &rooms[i].game);
+                     write_client(rooms[i].game.players[2 + j].id, (char *)buffer,
+                            payload_size);
+                }
             } else {
                 if (res == OUT_OF_BOUNDS) {
                     payload_size = server_client_protocol_write_invalid_play(
