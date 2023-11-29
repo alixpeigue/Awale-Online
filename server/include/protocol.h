@@ -12,6 +12,7 @@ typedef struct {
     void (*play)(uint8_t pos);
     void (*leave_room)(void);
     void (*send_message)(const char *message);
+    void (*set_biography)(const char *biography);
 } Handlers;
 
 void handlers_init(Handlers *handler);
@@ -29,7 +30,7 @@ server_client_protocol_write_room_creation_refused(uint8_t *buf,
                                                    const char *error_message);
 size_t server_client_protocol_write_join_room_successful(uint8_t *buf,
                                                          const char **users,
-                                                         uint8_t nb_users);
+                                                         uint8_t nb_users, const char **player_bios);
 size_t
 server_client_protocol_write_join_room_refused(uint8_t *buf,
                                                const char *error_message);

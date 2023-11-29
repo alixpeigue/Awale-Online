@@ -6,6 +6,7 @@ JOIN_ROOM <room_id> <spectate>
 PLAY <pos (0-5)>
 LEAVE_ROOM
 SEND_MESSAGE <message>
+SET_BIOGRAPHY <biography>
 
 
 Server_Client

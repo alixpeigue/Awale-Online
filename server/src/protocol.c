@@ -41,6 +41,10 @@ size_t client_server_protocol_read(const uint8_t *buf,
         char *message = (char *)(buf + 1);
         handlers->send_message(message);
     } break;
+    case SET_BIOGRAPHY: {
+        char *biography = (char *)(buf + 1);
+        handlers->set_biography(biography);
+    } break;
     }
     return 1;
 }
@@ -124,14 +128,20 @@ void handle_join_room(uint32_t room_id) {
         room_add_player(&rooms[i], player);
 
         const char *player_names[MAX_GAME_PLAYERS];
+        const char *player_bios[2];
 
         for (int j = 0; j < rooms[i].game.nb_players; ++j) {
             player_names[j] = rooms[i].game.players[j].name;
         }
 
+        for (int j = 0; j < 2; ++j) {
+            player_bios[j] =
+                clients[rooms[i].game.players[j].client_index].biography;
+        }
+
         clients[current_client].room_id = room_id;
         payload_size = server_client_protocol_write_join_room_successful(
-            buffer, player_names, rooms[i].game.nb_players);
+            buffer, player_names, rooms[i].game.nb_players, player_bios);
         write_client(clients[current_client].sock, (char *)buffer,
                      payload_size);
 
@@ -231,6 +241,10 @@ void handle_send_message(const char *message) {
     }
 }
 
+void handle_set_biography(const char *biography) {
+    strcpy(clients[current_client].biography, biography);
+}
+
 size_t server_client_protocol_write_connection_successful(uint8_t *buf) {
     uint16_t size = 1;
     *(uint16_t *)&buf[0] = size;
@@ -267,10 +281,10 @@ server_client_protocol_write_room_creation_refused(uint8_t *buf,
     return size + 2;
 }
 
-size_t server_client_protocol_write_join_room_successful(uint8_t *buf,
-                                                         const char **users,
-                                                         uint8_t nb_users) {
-    uint16_t size = 4;
+size_t server_client_protocol_write_join_room_successful(
+    uint8_t *buf, const char **users, uint8_t nb_users,
+    const char **player_bios) {
+    uint16_t size = 2;
     buf[2] = JOIN_ROOM_SUCCESSFUL;
     *(uint8_t *)&buf[3] = nb_users;
 
@@ -280,8 +294,14 @@ size_t server_client_protocol_write_join_room_successful(uint8_t *buf,
         size += strlen(users[i]) + 1;
     }
 
+    for (int i = 0; i < 2; ++i) {
+        strcpy((char *)&buf[size], player_bios[i]);
+
+        size += strlen(player_bios[i]) + 1;
+    }
+
     *(uint16_t *)&buf[0] = size;
-    return size;
+    return size + 2;
 }
 
 size_t
@@ -378,4 +398,5 @@ void handlers_init(Handlers *handlers) {
     handlers->leave_room = handle_leave_room;
     handlers->play = handle_play;
     handlers->send_message = handle_send_message;
+    handlers->set_biography = handle_set_biography;
 }

@@ -7,7 +7,9 @@ typedef enum {
     JOIN_ROOM,
     PLAY,
     LEAVE_ROOM,
-    SEND_MESSAGE
+    SEND_MESSAGE,
+    SET_BIOGRAPHY
+    
 } ClientServerProtocol;
 
 #endif
