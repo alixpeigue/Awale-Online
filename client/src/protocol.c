@@ -96,7 +96,7 @@ size_t server_client_protocol_write_join_room(uint8_t *buf, uint32_t room_id, ui
     *(uint16_t *)&buf[0] = size;
     buf[2] = JOIN_ROOM;
     *(uint32_t *)&buf[3] = room_id;
-    buf[5] = spectate;
+    buf[7] = spectate;
     return size + 2;
 }
 

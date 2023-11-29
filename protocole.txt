@@ -15,7 +15,7 @@ CONNECTION_SUCCESSFUL
 CONNECTION_REFUSED <error message>
 ROOM_CREATION_SUCCESSFUL <room_id>
 ROOM_CREATION_REFUSED <room_id>
-JOIN_ROOM_SUCCESSFUL nb_users <users,...>
+JOIN_ROOM_SUCCESSFUL nb_users <users,...> <bios,...> nb_spectators <spectators,...>
 JOIN_ROOM_REFUSED <error message>
 PLAYED <your_score> <other_score> <board_state>
 GAME_START <pos (0-1-2)>
