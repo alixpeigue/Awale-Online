@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #define BOARD_SIZE 12
+#define MAX_GAME_PLAYERS 1024
 #define INITIAL_SEED 4
 
 typedef enum { NOT_ENDED, P1WON, P2WON, DRAW } GameState;
@@ -19,7 +20,7 @@ typedef struct {
 typedef struct {
     uint8_t board[BOARD_SIZE];
     int nb_players;
-    Player players[1024];
+    Player players[MAX_GAME_PLAYERS];
 } Game;
 
 void game_init(Game *game);

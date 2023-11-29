@@ -108,7 +108,7 @@ void handle_join_room(uint32_t room_id) {
     for (i = 0; i < nb_rooms; ++i) {
         if (rooms[i].id == room_id) {
 
-            if (rooms[i].game.players[1].id != 0) {
+            if (rooms[i].game.nb_players >= MAX_GAME_PLAYERS) {
                 room_full = 1;
                 break;
             }
@@ -148,8 +148,6 @@ void handle_join_room(uint32_t room_id) {
                      payload_size);
     }
 }
-
-void handle_spectate_room(uint32_t room_id) {}
 
 void handle_play(uint8_t play) {
     for (int i = 0; i < nb_rooms; ++i) {
@@ -221,8 +219,8 @@ void handle_send_message(const char *message) {
     size_t payload_size =
         server_client_protocol_write_send_message_to_room(buffer, message);
 
-    for (int i = 0; i < rooms[i].game.nb_players; ++i) {
-        write_client(rooms[i].game.players[i].id, (char *)buffer, payload_size);
+    for (int j = 0; j < rooms[i].game.nb_players; ++j) {
+        write_client(rooms[i].game.players[j].id, (char *)buffer, payload_size);
     }
 }
 
@@ -370,6 +368,6 @@ void handlers_init(Handlers *handlers) {
     handlers->join_room = handle_join_room;
     handlers->leave_room = handle_leave_room;
     handlers->play = handle_play;
-    handlers->spectate_room = handle_spectate_room;
+    handlers->spectate_room = handle_join_room;
     handlers->send_message = handle_send_message;
 }
