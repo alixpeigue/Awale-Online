@@ -149,7 +149,13 @@ void handle_join_room(uint32_t room_id, uint8_t spectate) {
         write_client(clients[current_client].sock, (char *)buffer,
                      payload_size);
 
-        for (int j = 0; j < 2; ++j) {
+        for (int j = 0; j < rooms[i].game.nb_players; ++j) {
+            payload_size = server_client_protocol_write_game_start(buffer, j);
+            write_client(rooms[i].game.players[j].id, (char *)buffer,
+                         payload_size);
+        }
+
+        for (int j = 2; j < rooms[i].game.nb_spectators + 2; ++j) {
             payload_size = server_client_protocol_write_game_start(buffer, j);
             write_client(rooms[i].game.players[j].id, (char *)buffer,
                          payload_size);
