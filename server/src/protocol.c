@@ -136,7 +136,7 @@ void handle_join_room(uint32_t room_id) {
         write_client(clients[current_client].sock, (char *)buffer,
                      payload_size);
 
-        for (int j = 0; j < rooms[i].game.nb_players; ++j) {
+        for (int j = 0; j < 2; ++j) {
             payload_size = server_client_protocol_write_game_start(buffer, j);
             write_client(rooms[i].game.players[j].id, (char *)buffer,
                          payload_size);
