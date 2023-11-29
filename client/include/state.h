@@ -51,6 +51,9 @@ void handle_spectator_joined_room(State *state, const char *username);
 
 void handle_game_stopped(State *state, uint8_t draw, const char *winner);
 
+void handle_message(State *state, const char *username, const char *message);
+
 void handle_invalid_play(State *state, const char *message);
+
 
 #endif

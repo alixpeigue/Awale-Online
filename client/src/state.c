@@ -198,7 +198,7 @@ void handle_spectator_joined_room(State *state, const char *username) {
 void handle_game_stopped(State *state, uint8_t draw, const char *winner) {
     if (*state == IN_GAME || *state == SPECTATING || *state == IN_ROOM || *state == WAITING_PLAY_INPUT) {
         if (!draw) {
-            printf("Game ended ! %s won\n", winner);
+            printf("Game ended ! %s won !\n", winner);
         } else {
             printf("Game ended ! It's a draw !\n");
         }
@@ -206,7 +206,7 @@ void handle_game_stopped(State *state, uint8_t draw, const char *winner) {
     }
 }
 
-void handle_message(State *state, const char *username, const char *message, bool first) {
+void handle_message(State *state, const char *username, const char *message) {
     if (*state == IN_ROOM || *state == SPECTATING || *state == IN_GAME || *state == WAITING_PLAY_INPUT || *state == WAITING_PLAY_ACK) {
         printf("(%s) %s\n", username, message);
     }
