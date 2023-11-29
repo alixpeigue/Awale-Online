@@ -253,6 +253,13 @@ void handle_send_message(const char *message) {
                          payload_size);
         }
     }
+
+    for (int j = 2; j < rooms[i].game.nb_spectators + 2; ++j) {
+        if (rooms[i].game.players[j].id != clients[current_client].sock) {
+            write_client(rooms[i].game.players[j].id, (char *)buffer,
+                         payload_size);
+        }
+    }
 }
 
 void handle_set_biography(const char *biography) {
