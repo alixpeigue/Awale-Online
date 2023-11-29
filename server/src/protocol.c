@@ -28,7 +28,7 @@ size_t client_server_protocol_read(const uint8_t *buf,
     } break;
     case JOIN_ROOM: {
         uint32_t room_id = *(uint32_t *)&buf[1];
-        uint8_t spectate = *(uint32_t *)&buf[2];
+        uint8_t spectate = buf[sizeof(room_id) + 1];
         handlers->join_room(room_id, spectate);
     } break;
     case PLAY: {
@@ -132,6 +132,7 @@ void handle_join_room(uint32_t room_id, uint8_t spectate) {
         const char *player_bios[2];
 
         for (int j = 0; j < rooms[i].game.nb_players; ++j) {
+            player_names[j] = rooms[i].game.players[2 + j].name;
             player_bios[j] =
                 clients[rooms[i].game.players[j].client_index].biography;
         }
@@ -291,12 +292,12 @@ size_t server_client_protocol_write_join_room_successful(
     *(uint8_t *)&buf[3] = nb_users;
     *(uint8_t *)&buf[4] = nb_spectators;
 
-    for (int i = 0; i < nb_users; ++i) {
+    for (int i = 0; i < nb_users + nb_spectators; ++i) {
         strcpy((char *)&buf[size + 2], users[i]);
 
         size += strlen(users[i]) + 1;
 
-        if (i < 2) {
+        if (i < nb_users) {
             strcpy((char *)&buf[size + 2], player_bios[i]);
 
             size += strlen(player_bios[i]) + 1;
