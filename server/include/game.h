@@ -15,6 +15,7 @@ typedef struct {
     uint32_t id;
     char name[1024];
     int8_t captured;
+    int client_index;
 } Player;
 
 typedef struct {
