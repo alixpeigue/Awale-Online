@@ -22,6 +22,7 @@ void app(char* address) {
     handlers.player_joined_room = &handle_player_joined_room;
     handlers.spectator_joined_room = &handle_spectator_joined_room;
     handlers.game_stopped = &handle_game_stopped;
+    handlers.invalid_play = &handle_invalid_play;
 
     State state;
     SOCKET sock = init_connection(address);

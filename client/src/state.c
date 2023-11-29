@@ -74,10 +74,18 @@ void handle_user_input(State *state, const char *in) {
         set_current_state(state, WAITING_SPECTATE_ROOM_RESPONSE);
     } break;
     case WAITING_PLAY_INPUT: {
-        uint8_t pos = atoi(in) - 1;
-        size = server_client_protocol_write_play(buf, pos);
-        write_server((char *)buf, size);
-        set_current_state(state, WAITING_PLAY_ACK);
+        char * endptr;
+        uint8_t pos = strtol(in, &endptr ,10) - 1;
+        if(*endptr == '\0') { // input is valid pos
+            size = server_client_protocol_write_play(buf, pos);
+            write_server((char *)buf, size);
+            set_current_state(state, WAITING_PLAY_ACK);
+        } else {
+            size = server_client_protocol_write_send_message(buf, in);
+            write_server((char *)buf, size);
+            printf("Message Sent !\n");
+            set_current_state(state, WAITING_PLAY_INPUT);
+        }
     } break;
     case IN_ROOM:
     case SPECTATING:
