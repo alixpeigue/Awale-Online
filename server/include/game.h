@@ -7,6 +7,8 @@
 #define MAX_GAME_PLAYERS 1024
 #define INITIAL_SEED 4
 
+typedef enum {P1, P2, SPECTATOR} Side;
+
 typedef enum { NOT_ENDED, P1WON, P2WON, DRAW } GameState;
 
 typedef enum { VALID_PLAY, OUT_OF_BOUNDS, EMPTY_HOUSE } PlayResult;

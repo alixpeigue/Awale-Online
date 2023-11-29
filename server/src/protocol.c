@@ -132,7 +132,7 @@ void handle_join_room(uint32_t room_id) {
 
         clients[current_client].room_id = room_id;
         payload_size = server_client_protocol_write_join_room_successful(
-            buffer, player_names, rooms[i].game.nb_players - 1);
+            buffer, player_names, rooms[i].game.nb_players);
         write_client(clients[current_client].sock, (char *)buffer,
                      payload_size);
 
@@ -221,12 +221,13 @@ void handle_send_message(const char *message) {
 
     uint8_t buffer[1024];
     // TODO: handle spectate and nb_users_in_room
-    size_t payload_size =
-        server_client_protocol_write_send_message_to_room(buffer, clients[current_client].name, message);
+    size_t payload_size = server_client_protocol_write_send_message_to_room(
+        buffer, clients[current_client].name, message);
 
     for (int j = 0; j < rooms[i].game.nb_players; ++j) {
         if (rooms[i].game.players[j].id != clients[current_client].sock) {
-            write_client(rooms[i].game.players[j].id, (char *)buffer, payload_size);
+            write_client(rooms[i].game.players[j].id, (char *)buffer,
+                         payload_size);
         }
     }
 }
