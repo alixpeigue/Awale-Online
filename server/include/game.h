@@ -18,7 +18,8 @@ typedef struct {
 
 typedef struct {
     uint8_t board[BOARD_SIZE];
-    Player players[2];
+    int nb_players;
+    Player players[1024];
 } Game;
 
 void game_init(Game *game);

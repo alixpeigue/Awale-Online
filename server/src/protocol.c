@@ -157,7 +157,8 @@ void handle_play(uint8_t play) {
             int player_side =
                 rooms[i].game.players[0].id == clients[current_client].sock ? 0
                                                                             : 1;
-            PlayResult res = room_play(&rooms[i], player_side * BOARD_SIZE / 2 + play, player_side);
+            PlayResult res = room_play(
+                &rooms[i], player_side * BOARD_SIZE / 2 + play, player_side);
             uint8_t buffer[1024];
             size_t payload_size = 0;
             if (res == VALID_PLAY) {
@@ -172,28 +173,31 @@ void handle_play(uint8_t play) {
             } else {
                 if (res == OUT_OF_BOUNDS) {
                     payload_size = server_client_protocol_write_invalid_play(
-                            buffer, "Error: Invalid play.");
+                        buffer, "Error: Invalid play.");
                 } else if (res == EMPTY_HOUSE) {
                     payload_size = server_client_protocol_write_invalid_play(
-                            buffer, "Error: Empty house.");
+                        buffer, "Error: Empty house.");
                 } else {
                     payload_size = server_client_protocol_write_invalid_play(
-                            buffer, "Unknown error.");
+                        buffer, "Unknown error.");
                 }
 
-                write_client(rooms[i].game.players[player_side].id, (char *)buffer,
-                             payload_size);
+                write_client(rooms[i].game.players[player_side].id,
+                             (char *)buffer, payload_size);
             }
             GameState gs = game_is_ended(&rooms[i].game);
-            if(gs) {
-                uint8_t draw = gs==DRAW;
+            if (gs != NOT_ENDED) {
+                uint8_t draw = gs == DRAW;
                 const char *winner;
-                if(!draw) {
-                    winner = rooms[i].game.players[gs-1].name;
+                if (!draw) {
+                    winner = rooms[i].game.players[gs - 1].name;
                 }
-                payload_size = server_client_protocol_write_game_stopped(buffer, gs==DRAW, winner);
-                write_client(rooms[i].game.players[0].id, (char *)buffer, payload_size);
-                write_client(rooms[i].game.players[1].id, (char *)buffer, payload_size);
+                payload_size = server_client_protocol_write_game_stopped(
+                    buffer, gs == DRAW, winner);
+                write_client(rooms[i].game.players[0].id, (char *)buffer,
+                             payload_size);
+                write_client(rooms[i].game.players[1].id, (char *)buffer,
+                             payload_size);
             }
             break;
         }
@@ -202,7 +206,25 @@ void handle_play(uint8_t play) {
 
 void handle_leave_room(void) {}
 
-void handle_send_message(const char *message) {}
+void handle_send_message(const char *message) {
+    uint32_t room_id = clients[current_client].room_id;
+
+    int i;
+    for (i = 0; i < nb_rooms; ++i) {
+        if (rooms[i].id == room_id) {
+            break;
+        }
+    }
+
+    uint8_t buffer[1024];
+    // TODO: handle spectate and nb_users_in_room
+    size_t payload_size =
+        server_client_protocol_write_send_message_to_room(buffer, message);
+
+    for (int i = 0; i < rooms[i].game.nb_players; ++i) {
+        write_client(rooms[i].game.players[i].id, (char *)buffer, payload_size);
+    }
+}
 
 size_t server_client_protocol_write_connection_successful(uint8_t *buf) {
     uint16_t size = 1;
@@ -275,15 +297,15 @@ size_t server_client_protocol_write_played(uint8_t *buf, int side,
     buf[3] = game->players[side].captured;
     buf[4] = game->players[1 - side].captured;
 
-    for(int i=0; i<BOARD_SIZE; ++i) {
-        buf[5+i] = game->board[(i+BOARD_SIZE/2*side) % BOARD_SIZE];
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        buf[5 + i] = game->board[(i + BOARD_SIZE / 2 * side) % BOARD_SIZE];
     }
 
     return size + 2;
 }
 
 size_t server_client_protocol_write_invalid_play(uint8_t *buf,
-                                           const char *error_message) {
+                                                 const char *error_message) {
     uint16_t size = strlen(error_message) + 2;
     *(uint16_t *)&buf[0] = size;
     buf[2] = INVALID_PLAY;
@@ -320,15 +342,25 @@ server_client_protocol_write_spectator_joined_room(uint8_t *buf,
     return size + 2;
 }
 
-size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t draw, const char* winner) {
-    uint16_t size = 1+sizeof(draw);
-    if(!draw){
-        size += 1+strlen(winner);
+size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t draw,
+                                                 const char *winner) {
+    uint16_t size = 1 + sizeof(draw);
+    if (!draw) {
+        size += 1 + strlen(winner);
         strcpy((char *)&buf[4], winner);
     }
     *(uint16_t *)&buf[0] = size;
     buf[2] = GAME_STOPPED;
     *(uint8_t *)&buf[3] = draw;
+    return size + 2;
+}
+
+size_t server_client_protocol_write_send_message_to_room(uint8_t *buf,
+                                                         const char *message) {
+    uint16_t size = strlen(message) + 2;
+    *(uint16_t *)&buf[0] = size;
+    buf[2] = MESSAGE;
+    strcpy((char *)&buf[3], message);
     return size + 2;
 }
 

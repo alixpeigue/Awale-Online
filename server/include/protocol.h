@@ -23,7 +23,8 @@ size_t server_client_protocol_write_connection_successful(uint8_t *buf);
 size_t
 server_client_protocol_write_connection_refused(uint8_t *buf,
                                                 const char *error_message);
-size_t server_client_protocol_write_room_creation_successful(uint8_t *buf, uint32_t room_id);
+size_t server_client_protocol_write_room_creation_successful(uint8_t *buf,
+                                                             uint32_t room_id);
 size_t
 server_client_protocol_write_room_creation_refused(uint8_t *buf,
                                                    const char *error_message);
@@ -33,12 +34,17 @@ size_t server_client_protocol_write_join_room_successful(uint8_t *buf,
 size_t
 server_client_protocol_write_join_room_refused(uint8_t *buf,
                                                const char *error_message);
-size_t server_client_protocol_write_played(uint8_t *buf, int side, const Game *game);
-size_t server_client_protocol_write_invalid_play(uint8_t *buf, const char *error_message);
+size_t server_client_protocol_write_played(uint8_t *buf, int side,
+                                           const Game *game);
+size_t server_client_protocol_write_invalid_play(uint8_t *buf,
+                                                 const char *error_message);
 size_t server_client_protocol_write_game_start(uint8_t *buf, uint8_t side);
 size_t server_client_protocol_write_player_joined_room(uint8_t *buf,
                                                        const char *username);
 size_t server_client_protocol_write_spectator_joined_room(uint8_t *buf,
                                                           const char *username);
-size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t draw, const char* winner);
+size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t draw,
+                                                 const char *winner);
+size_t server_client_protocol_write_send_message_to_room(uint8_t *buf,
+                                                         const char *message);
 #endif

@@ -8,18 +8,16 @@ void game_init(Game *game) {
         game->board[i] = INITIAL_SEED;
     }
 
-    for (int i = 0; i < 2; ++i) {
-        game->players[i].captured = 0;
-        game->players[i].id = 0;
-        game->players[i].name[0] = '\0';
-    }
+    game->nb_players = 0;
+
 }
 
 void game_add_player(Game *game, Player player) {
-    int i = game->players[0].id == 0 ? 0 : 1;
-    game->players[i].captured = 0;
-    game->players[i].id = player.id;
-    strcpy(game->players[i].name, player.name);
+    game->players[game->nb_players].captured = 0;
+    game->players[game->nb_players].id = player.id;
+    strcpy(game->players[game->nb_players].name, player.name);
+
+    ++game->nb_players;
 }
 
 int game_board_can_capture(const uint8_t *board, int opposite_side,
