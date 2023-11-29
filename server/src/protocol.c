@@ -132,9 +132,10 @@ void handle_join_room(uint32_t room_id, uint8_t spectate) {
         const char *player_bios[2];
 
         for (int j = 0; j < rooms[i].game.nb_players; ++j) {
-            player_names[j] = rooms[i].game.players[2 + j].name;
+            player_names[j] = rooms[i].game.players[j].name;
             player_bios[j] =
                 clients[rooms[i].game.players[j].client_index].biography;
+            printf("BIO : %s \n", player_bios[j]);
         }
 
         for (int j = 0; j < rooms[i].game.nb_spectators; ++j) {

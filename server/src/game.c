@@ -20,6 +20,7 @@ void game_add_player(Game *game, Player player, uint8_t spectate) {
     }
     game->players[index].captured = 0;
     game->players[index].id = player.id;
+    game->players[index].client_index = player.client_index;
     strcpy(game->players[index].name, player.name);
 
     if (spectate) {
