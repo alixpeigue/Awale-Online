@@ -15,8 +15,6 @@ void app(char* address) {
     handlers.room_creation_refused = &handle_room_creation_refused;
     handlers.join_room_successful = &handle_join_room_successful;
     handlers.join_room_refused = &handle_join_room_refused;
-    handlers.spectate_room_successful = &handle_spectate_room_successful;
-    handlers.spectate_room_refused = &handle_spectate_room_refused;
     handlers.played = &handle_played;
     handlers.game_start = &handle_game_start;
     handlers.player_joined_room = &handle_player_joined_room;

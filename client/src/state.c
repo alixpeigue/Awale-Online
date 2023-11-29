@@ -59,6 +59,9 @@ void handle_user_input(State *state, const char *in) {
         case 3:
             set_current_state(state, WAITING_SPECTATE_ROOM_INPUT);
             break;
+        case 4:
+            set_current_state(state, WAITING_BIO_INPUT);
+            break;
         }
     } break;
     case WAITING_JOIN_ROOM_INPUT: {
@@ -73,6 +76,11 @@ void handle_user_input(State *state, const char *in) {
         write_server((char *)buf, size);
         set_current_state(state, WAITING_SPECTATE_ROOM_RESPONSE);
     } break;
+    case WAITING_BIO_INPUT: {
+        size = server_client_protocol_write_set_biography(buf, in);
+        write_server((char *)buf, size);
+        set_current_state(state, CONNECTED);
+    }
     case WAITING_PLAY_INPUT: {
         char * endptr;
         uint8_t pos = strtol(in, &endptr ,10) - 1;

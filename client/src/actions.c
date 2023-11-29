@@ -16,7 +16,7 @@ void action_play() {
 
 void action_choose() {
     printf("What do you want to do ?\n 1 - Create a room\n 2 - Join a room\n 3 "
-           "- Spectate a room\n");
+           "- Spectate a room\n 4 - Update your bio\n");
 }
 
 void action_create_room() {
@@ -31,6 +31,10 @@ void action_join_room() {
 
 void action_spectate_room() {
     printf("What room do you want to spectate ?\n");
+}
+
+void action_bio() {
+    printf("What is your new bio ?\n");
 }
 
 void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {

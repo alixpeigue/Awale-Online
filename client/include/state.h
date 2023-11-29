@@ -17,7 +17,8 @@ typedef enum {
     IN_GAME,
     WAITING_PLAY_INPUT,
     WAITING_PLAY_ACK,
-    SPECTATING
+    SPECTATING,
+    WAITING_BIO_INPUT
 } State;
 
 void set_current_state(State *state, State new_state);

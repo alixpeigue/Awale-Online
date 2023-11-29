@@ -67,7 +67,7 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
         const char* username = (char *)&buf[1];
         const char* message = (char *)&buf[2+strlen(username)];
         handlers->message(state, username, message);
-    }
+    } break;
     case INVALID_PLAY: {
         const char * message = (char *)&buf[1];
         handlers->invalid_play(state, message);
@@ -120,5 +120,13 @@ size_t server_client_protocol_write_send_message(uint8_t *buf, const char *messa
     *(uint16_t *)&buf[0] = size;
     buf[2] = SEND_MESSAGE;
     strcpy((char *)&buf[3], message);
+    return size + 2;
+}
+
+size_t server_client_protocol_write_set_biography(uint8_t *buf, const char *bio) {
+    uint16_t size = 2 + strlen(bio);
+    *(uint16_t *)&buf[0] = size;
+    buf[2] = SET_BIOGRAPHY;
+    strcpy((char *)&buf[3], bio);
     return size + 2;
 }
