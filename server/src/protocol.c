@@ -124,18 +124,23 @@ void handle_join_room(uint32_t room_id) {
     }
 
     if (room_found) {
-        const char *player_names[2];
-        player_names[0] = rooms[i].game.players[0].name;
-        player_names[1] = rooms[i].game.players[1].name;
+        const char *player_names[MAX_GAME_PLAYERS];
+
+        for (int j = 0; j < rooms[i].game.nb_players; ++j) {
+            player_names[j] = rooms[i].game.players[j].name;
+        }
+
         clients[current_client].room_id = room_id;
         payload_size = server_client_protocol_write_join_room_successful(
-            buffer, player_names, 2);
+            buffer, player_names, rooms[i].game.nb_players - 1);
         write_client(clients[current_client].sock, (char *)buffer,
                      payload_size);
-        payload_size = server_client_protocol_write_game_start(buffer, 0);
-        write_client(rooms[i].game.players[0].id, (char *)buffer, payload_size);
-        payload_size = server_client_protocol_write_game_start(buffer, 1);
-        write_client(rooms[i].game.players[1].id, (char *)buffer, payload_size);
+
+        for (int j = 0; j < rooms[i].game.nb_players; ++j) {
+            payload_size = server_client_protocol_write_game_start(buffer, j);
+            write_client(rooms[i].game.players[j].id, (char *)buffer,
+                         payload_size);
+        }
     } else if (room_full) {
         payload_size = server_client_protocol_write_join_room_refused(
             buffer, "Error: The room is full. Try to spectate instead.");
@@ -217,10 +222,12 @@ void handle_send_message(const char *message) {
     uint8_t buffer[1024];
     // TODO: handle spectate and nb_users_in_room
     size_t payload_size =
-        server_client_protocol_write_send_message_to_room(buffer, message);
+        server_client_protocol_write_send_message_to_room(buffer, clients[current_client].name, message);
 
     for (int j = 0; j < rooms[i].game.nb_players; ++j) {
-        write_client(rooms[i].game.players[j].id, (char *)buffer, payload_size);
+        if (rooms[i].game.players[j].id != clients[current_client].sock) {
+            write_client(rooms[i].game.players[j].id, (char *)buffer, payload_size);
+        }
     }
 }
 
@@ -354,11 +361,13 @@ size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t draw,
 }
 
 size_t server_client_protocol_write_send_message_to_room(uint8_t *buf,
+                                                         const char *username,
                                                          const char *message) {
-    uint16_t size = strlen(message) + 2;
+    uint16_t size = strlen(message) + strlen(username) + 3;
     *(uint16_t *)&buf[0] = size;
     buf[2] = MESSAGE;
-    strcpy((char *)&buf[3], message);
+    strcpy((char *)&buf[3], username);
+    strcpy((char *)&buf[3 + strlen(username) + 1], message);
     return size + 2;
 }
 

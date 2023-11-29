@@ -2,8 +2,7 @@ Client_Serveur
 
 CONNECT <name>
 CREATE_ROOM
-JOIN_ROOM <room_id>
-SPECTATE_ROOM <room_id>
+JOIN_ROOM <room_id> <spectate>
 PLAY <pos (0-5)>
 LEAVE_ROOM
 SEND_MESSAGE <message>
@@ -17,8 +16,6 @@ ROOM_CREATION_SUCCESSFUL <room_id>
 ROOM_CREATION_REFUSED <room_id>
 JOIN_ROOM_SUCCESSFUL nb_users <users,...>
 JOIN_ROOM_REFUSED <error message>
-SPECTATE_ROOM_SUCCESSFUL
-SPECTATE_ROOM_REFUSED <error message>
 PLAYED <your_score> <other_score> <board_state>
 GAME_START <pos (0-1-2)>
 PLAYER_JOINED_ROOM <username>
