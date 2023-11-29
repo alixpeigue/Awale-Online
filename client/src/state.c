@@ -135,20 +135,21 @@ void handle_room_creation_refused(State *state, const char *error_message) {
     }
 }
 
-void handle_join_room_successful(State *state, uint8_t nb_users,
-                                 const char **users) {
-    if (*state == WAITING_JOIN_ROOM_RESPONSE) {
-        printf("Room joined\nUsers in room spectating room : \n");
+void handle_join_room_successful(State *state, uint8_t nb_users, uint8_t nb_spectators,
+                                 const char **users, const char **bios, const char **spectators) {
+    if (*state == WAITING_JOIN_ROOM_RESPONSE || *state == WAITING_SPECTATE_ROOM_RESPONSE) {
+        printf("Room joined\nUsers in room : \n");
         for (uint8_t i = 0; i < nb_users; ++i) {
-            printf(" - %s\n", users[i]);
+            printf(" - %s : %s\n", users[i], bios[i]);
         }
-        set_current_state(state, IN_ROOM);
-    } else if (*state == WAITING_SPECTATE_ROOM_RESPONSE) {
-        printf("Spectating room ! Users in room :\n");
-        for (uint8_t i = 0; i < nb_users; ++i) {
-            printf(" - %s\n", users[i]);
+        for (uint8_t i = 0; i<nb_spectators; ++i) {
+            printf(" - %s", spectators[i]);
         }
-        set_current_state(state, SPECTATING);
+        if (*state == WAITING_JOIN_ROOM_RESPONSE) {
+            set_current_state(state, IN_ROOM);
+        } else {
+            set_current_state(state, SPECTATING);
+        }
     }
 }
 

@@ -27,14 +27,22 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
     } break;
     case JOIN_ROOM_SUCCESSFUL: {
         uint8_t nb_users = buf[1];
-        const char **users = calloc(nb_users, sizeof(char *));
-        const char *str = (const char *)&buf[2];
+        uint8_t nb_spectators = buf[2];
+        const char *users[2];
+        const char *bios[2];
+        const char *spectators[1024];
+        const char *str = (const char *)&buf[3];
         for (uint32_t i = 0; i < nb_users; ++i) {
             users[i] = str;
             str += strlen(str) + 1;
+            bios[i] = str;
+            str += strlen(str) + 1;
         }
-        handlers->join_room_successful(state, nb_users, users);
-        free(users);
+        for (uint32_t i = 0; i < nb_spectators; ++i) {
+            spectators[i] = str;
+            str += strlen(str)+1;
+        }
+        handlers->join_room_successful(state, nb_users, nb_spectators, users, bios, spectators);
     } break;
     case JOIN_ROOM_REFUSED: {
         const char *message = (const char *)&buf[1];

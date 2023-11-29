@@ -33,8 +33,8 @@ void handle_room_creation_successful(State *state, uint32_t room_id);
 
 void handle_room_creation_refused(State *state, const char *error_message);
 
-void handle_join_room_successful(State *state, uint8_t nb_users,
-                                 const char **users);
+void handle_join_room_successful(State *state, uint8_t nb_users, uint8_t nb_spectators,
+                                 const char **users, const char **bios, const char **spectators);
 
 void handle_join_room_refused(State *state, const char *error_message);
 

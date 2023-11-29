@@ -12,7 +12,7 @@ typedef struct {
     void (*connection_refused)(State *, const char *error_message);
     void (*room_creation_successful)(State *, uint32_t room_id);
     void (*room_creation_refused)(State *, const char *error_message);
-    void (*join_room_successful)(State *, uint8_t nb_users, const char **users);
+    void (*join_room_successful)(State *, uint8_t nb_users, uint8_t nb_spectators, const char **users, const char **bios, const char **spectators);
     void (*join_room_refused)(State *, const char *);
     void (*played)(State *, uint8_t s_score, uint8_t o_score, uint8_t *board);
     void (*game_start)(State *, uint8_t pos);
