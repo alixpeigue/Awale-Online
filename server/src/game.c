@@ -9,7 +9,8 @@ void game_init(Game *game) {
     }
 
     game->nb_players = 0;
-
+    game->nb_spectators = 0;
+    game->is_started = 0;
 }
 
 void game_add_player(Game *game, Player player, uint8_t spectate) {

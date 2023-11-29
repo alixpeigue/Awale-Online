@@ -23,6 +23,7 @@ typedef struct {
     int nb_players;
     int nb_spectators;
     Player players[MAX_GAME_PLAYERS];
+    int is_started;
 } Game;
 
 void game_init(Game *game);

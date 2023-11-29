@@ -149,11 +149,12 @@ void handle_join_room(uint32_t room_id, uint8_t spectate) {
         write_client(clients[current_client].sock, (char *)buffer,
                      payload_size);
 
-        if (rooms[i].game.nb_players >= 2) {
+        if (rooms[i].game.nb_players >= 2 && !rooms[i].game.is_started) {
             for (int j = 0; j < rooms[i].game.nb_players; ++j) {
                 payload_size = server_client_protocol_write_game_start(buffer, j);
                 write_client(rooms[i].game.players[j].id, (char *)buffer,
                         payload_size);
+                rooms[i].game.is_started = 1;
             }
         }
 
