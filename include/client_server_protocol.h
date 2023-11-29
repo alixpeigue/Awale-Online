@@ -5,7 +5,6 @@ typedef enum {
     CONNECT,
     CREATE_ROOM,
     JOIN_ROOM,
-    SPECTATE_ROOM,
     PLAY,
     LEAVE_ROOM,
     SEND_MESSAGE

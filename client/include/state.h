@@ -37,10 +37,6 @@ void handle_join_room_successful(State *state, uint8_t nb_users,
 
 void handle_join_room_refused(State *state, const char *error_message);
 
-void handle_spectate_room_successful(State *state);
-
-void handle_spectate_room_refused(State *state, const char *error_message);
-
 void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *board);
 
 void handle_game_start(State *state, uint8_t pos);

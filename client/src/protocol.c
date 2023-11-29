@@ -40,13 +40,6 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
         const char *message = (const char *)&buf[1];
         handlers->join_room_refused(state, message);
     } break;
-    case SPECTATE_ROOM_SUCCESSFUL: {
-        handlers->spectate_room_successful(state);
-    } break;
-    case SPECTATE_ROOM_REFUSED: {
-        const char *message = (const char *)&buf[1];
-        handlers->spectate_room_refused(state, message);
-    } break;
     case PLAYED: {
         uint8_t s_score = buf[1];
         uint8_t o_score = buf[2];
@@ -98,11 +91,12 @@ size_t server_client_protocol_write_create_room(uint8_t *buf) {
     return size + 2;
 }
 
-size_t server_client_protocol_write_join_room(uint8_t *buf, uint32_t room_id) {
-    uint16_t size = sizeof(room_id) + 1;
+size_t server_client_protocol_write_join_room(uint8_t *buf, uint32_t room_id, uint8_t spectate) {
+    uint16_t size = sizeof(room_id) + sizeof(spectate) + 1;
     *(uint16_t *)&buf[0] = size;
     buf[2] = JOIN_ROOM;
     *(uint32_t *)&buf[3] = room_id;
+    buf[5] = spectate;
     return size + 2;
 }
 
@@ -119,13 +113,6 @@ size_t server_client_protocol_write_play(uint8_t *buf, uint8_t pos) {
     buf[2] = PLAY;
     buf[3] = pos;
     return size + 2;
-}
-
-size_t server_client_protocol_write_spectate_room(uint8_t *buf,
-                                                  uint32_t room_id) {
-    size_t size = server_client_protocol_write_join_room(buf, room_id);
-    buf[2] = SPECTATE_ROOM;
-    return size;
 }
 
 size_t server_client_protocol_write_send_message(uint8_t *buf, const char *message) {

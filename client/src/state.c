@@ -63,13 +63,13 @@ void handle_user_input(State *state, const char *in) {
     } break;
     case WAITING_JOIN_ROOM_INPUT: {
         uint32_t room_id = strtol(in, NULL, 16);
-        size = server_client_protocol_write_join_room(buf, room_id);
+        size = server_client_protocol_write_join_room(buf, room_id, 0);
         write_server((char *)buf, size);
         set_current_state(state, WAITING_JOIN_ROOM_RESPONSE);
     } break;
     case WAITING_SPECTATE_ROOM_INPUT: {
         uint32_t room_id = strtol(in, NULL, 16);
-        size = server_client_protocol_write_spectate_room(buf, room_id);
+        size = server_client_protocol_write_join_room(buf, room_id, 1);
         write_server((char *)buf, size);
         set_current_state(state, WAITING_SPECTATE_ROOM_RESPONSE);
     } break;
@@ -135,26 +135,18 @@ void handle_join_room_successful(State *state, uint8_t nb_users,
             printf(" - %s\n", users[i]);
         }
         set_current_state(state, IN_ROOM);
+    } else if (*state == WAITING_SPECTATE_ROOM_RESPONSE) {
+        printf("Spectating room ! Users in room :\n");
+        for (uint8_t i = 0; i < nb_users; ++i) {
+            printf(" - %s\n", users[i]);
+        }
+        set_current_state(state, SPECTATING);
     }
 }
 
 void handle_join_room_refused(State *state, const char *error_message) {
     if (*state == WAITING_JOIN_ROOM_RESPONSE) {
         printf("Could not join room : %s\n", error_message);
-        set_current_state(state, CONNECTED);
-    }
-}
-
-void handle_spectate_room_successful(State *state) {
-    if (*state == WAITING_SPECTATE_ROOM_RESPONSE) {
-        printf("Successfilly joined room\n");
-        set_current_state(state, SPECTATING);
-    }
-}
-
-void handle_spectate_room_refused(State *state, const char *error_message) {
-    if (*state == WAITING_CREATE_ROOM_RESPONSE) {
-        printf("Could not spectate room : %s\n", error_message);
         set_current_state(state, CONNECTED);
     }
 }
