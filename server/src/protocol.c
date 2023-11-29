@@ -28,7 +28,8 @@ size_t client_server_protocol_read(const uint8_t *buf,
     } break;
     case JOIN_ROOM: {
         uint32_t room_id = *(uint32_t *)&buf[1];
-        handlers->join_room(room_id);
+        uint8_t spectate = *(uint32_t *)&buf[2];
+        handlers->join_room(room_id, spectate);
     } break;
     case PLAY: {
         uint8_t pos = *(uint8_t *)&buf[1];
@@ -91,7 +92,7 @@ void handle_create_room(void) {
     strcpy(player.name, clients[current_client].name);
     player.captured = 0;
     player.client_index = current_client;
-    room_add_player(&rooms[nb_rooms], player);
+    room_add_player(&rooms[nb_rooms], player, 0);
     size_t payload_size = server_client_protocol_write_room_creation_successful(
         buffer, rooms[nb_rooms].id);
     write_client(clients[current_client].sock, (char *)buffer, payload_size);
@@ -99,7 +100,7 @@ void handle_create_room(void) {
     ++nb_rooms;
 }
 
-void handle_join_room(uint32_t room_id) {
+void handle_join_room(uint32_t room_id, uint8_t spectate) {
     uint8_t buffer[BUF_SIZE];
     uint32_t payload_size = 0;
     int room_found = 0;
@@ -109,7 +110,7 @@ void handle_join_room(uint32_t room_id) {
     for (i = 0; i < nb_rooms; ++i) {
         if (rooms[i].id == room_id) {
 
-            if (rooms[i].game.nb_players >= MAX_GAME_PLAYERS) {
+            if ((!spectate && rooms[i].game.nb_players >= 2) || rooms[i].game.nb_players >= MAX_GAME_PLAYERS) {
                 room_full = 1;
                 break;
             }
@@ -125,23 +126,24 @@ void handle_join_room(uint32_t room_id) {
         strcpy(player.name, clients[current_client].name);
         player.captured = 0;
         player.client_index = current_client;
-        room_add_player(&rooms[i], player);
+        room_add_player(&rooms[i], player, spectate);
 
         const char *player_names[MAX_GAME_PLAYERS];
         const char *player_bios[2];
 
         for (int j = 0; j < rooms[i].game.nb_players; ++j) {
-            player_names[j] = rooms[i].game.players[j].name;
-        }
-
-        for (int j = 0; j < 2; ++j) {
             player_bios[j] =
                 clients[rooms[i].game.players[j].client_index].biography;
         }
 
+        for (int j = 0; j < rooms[i].game.nb_spectators; ++j) {
+            player_names[rooms[i].game.nb_players + j] = rooms[i].game.players[2 + j].name;
+        }
+
+
         clients[current_client].room_id = room_id;
         payload_size = server_client_protocol_write_join_room_successful(
-            buffer, player_names, rooms[i].game.nb_players, player_bios);
+            buffer, player_names, rooms[i].game.nb_players, rooms[i].game.nb_spectators, player_bios);
         write_client(clients[current_client].sock, (char *)buffer,
                      payload_size);
 
@@ -282,22 +284,23 @@ server_client_protocol_write_room_creation_refused(uint8_t *buf,
 }
 
 size_t server_client_protocol_write_join_room_successful(
-    uint8_t *buf, const char **users, uint8_t nb_users,
+    uint8_t *buf, const char **users, uint8_t nb_users, uint8_t nb_spectators,
     const char **player_bios) {
-    uint16_t size = 2;
+    uint16_t size = 3;
     buf[2] = JOIN_ROOM_SUCCESSFUL;
     *(uint8_t *)&buf[3] = nb_users;
+    *(uint8_t *)&buf[4] = nb_spectators;
 
     for (int i = 0; i < nb_users; ++i) {
-        strcpy((char *)&buf[size], users[i]);
+        strcpy((char *)&buf[size + 2], users[i]);
 
         size += strlen(users[i]) + 1;
-    }
 
-    for (int i = 0; i < 2; ++i) {
-        strcpy((char *)&buf[size], player_bios[i]);
+        if (i < 2) {
+            strcpy((char *)&buf[size + 2], player_bios[i]);
 
-        size += strlen(player_bios[i]) + 1;
+            size += strlen(player_bios[i]) + 1;
+        }
     }
 
     *(uint16_t *)&buf[0] = size;

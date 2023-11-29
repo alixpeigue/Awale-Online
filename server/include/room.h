@@ -9,7 +9,7 @@ typedef struct {
 } Room;
 
 void room_init(Room *room);
-void room_add_player(Room *room, Player player);
+void room_add_player(Room *room, Player player, uint8_t spectate);
 PlayResult room_play(Room *room, int pos, int side);
 
 #endif

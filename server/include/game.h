@@ -21,11 +21,12 @@ typedef struct {
 typedef struct {
     uint8_t board[BOARD_SIZE];
     int nb_players;
+    int nb_spectators;
     Player players[MAX_GAME_PLAYERS];
 } Game;
 
 void game_init(Game *game);
-void game_add_player(Game *game, Player player);
+void game_add_player(Game *game, Player player, uint8_t spectate);
 PlayResult game_play(Game *game, int pos, int side);
 int game_board_can_capture(const uint8_t *board, int opposite_side, int last_pos);
 GameState game_is_ended(const Game *game);

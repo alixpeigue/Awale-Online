@@ -12,12 +12,21 @@ void game_init(Game *game) {
 
 }
 
-void game_add_player(Game *game, Player player) {
-    game->players[game->nb_players].captured = 0;
-    game->players[game->nb_players].id = player.id;
-    strcpy(game->players[game->nb_players].name, player.name);
+void game_add_player(Game *game, Player player, uint8_t spectate) {
+    int index = game->nb_players;
 
-    ++game->nb_players;
+    if (spectate) {
+        index = 2 + game->nb_spectators;
+    }
+    game->players[index].captured = 0;
+    game->players[index].id = player.id;
+    strcpy(game->players[index].name, player.name);
+
+    if (spectate) {
+        ++game->nb_spectators;
+    } else {
+        ++game->nb_players;
+    }
 }
 
 int game_board_can_capture(const uint8_t *board, int opposite_side,
