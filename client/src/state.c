@@ -9,7 +9,7 @@
 
 void set_current_state(State *state, State new_state) {
     *state = new_state;
-    printf("New state: %d\n", new_state);
+    fprintf(stderr, "New state: %d\n", new_state);
     switch (new_state) {
     case CONNECTING:
         action_connect();
@@ -40,7 +40,7 @@ void handle_user_input(State *state, const char *in) {
     size_t size;
     switch (*state) {
     case CONNECTING: {
-        printf("Welcome, %s\n", in);
+        fprintf(stderr, "Types %s\n", in);
         size = server_client_protocol_write_connect(buf, in);
         write_server((char *)buf, size);
         set_current_state(state, WAITING_CONNECTION);
@@ -92,7 +92,7 @@ void handle_user_input(State *state, const char *in) {
         } else {
             size = server_client_protocol_write_send_message(buf, in);
             write_server((char *)buf, size);
-            printf("Message Sent !\n");
+            printf("Message Sent\n");
             set_current_state(state, WAITING_PLAY_INPUT);
         }
     } break;
@@ -143,9 +143,11 @@ void handle_join_room_successful(State *state, uint8_t nb_users, uint8_t nb_spec
         for (uint8_t i = 0; i < nb_users; ++i) {
             printf(" - %s : %s\n", users[i], bios[i]);
         }
+        printf("Spectators in room :\n");
         for (uint8_t i = 0; i<nb_spectators; ++i) {
-            printf(" - %s", spectators[i]);
+            printf(" - %s\n", spectators[i]);
         }
+        printf("\n");
         if (*state == WAITING_JOIN_ROOM_RESPONSE) {
             set_current_state(state, IN_ROOM);
         } else {
@@ -174,9 +176,9 @@ void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *boar
 }
 
 void handle_game_start(State *state, uint8_t pos) {
-    printf("Game starting ! oui oui"); 
+    printf("Game starting !\n"); 
     if (*state == IN_ROOM) {
-        printf("You start at position %d", pos);
+        printf("You start at position %d\n", pos);
         if(pos==0) {
             set_current_state(state, WAITING_PLAY_INPUT);
         } else if (pos==1) {

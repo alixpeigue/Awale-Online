@@ -50,7 +50,7 @@ SOCKET init_connection(const char *address) {
         perror("connect()");
         exit(errno);
     }
-    printf("Connected !\n");
+    fprintf(stderr, "Connected !\n");
     return sock;
 }
 
