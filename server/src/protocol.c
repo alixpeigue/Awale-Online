@@ -235,7 +235,6 @@ void handle_play(uint8_t play) {
             }
             GameState gs = game_is_ended(&rooms[i].game);
             if (gs != NOT_ENDED) {
-                // print("Game ended...");
                 uint8_t draw = gs == DRAW;
                 const char *winner;
                 if (!draw) {
@@ -247,6 +246,12 @@ void handle_play(uint8_t play) {
                              payload_size);
                 write_client(rooms[i].game.players[1].id, (char *)buffer,
                              payload_size);
+
+                //Delete room from rooms list
+                --nb_rooms;
+                for(int k=i; k<nb_rooms; ++k) {
+                    rooms[k] = rooms[k+1];
+                }
             }
             break;
         }
@@ -274,7 +279,7 @@ void handle_leave_room(void) {
             uint8_t buffer[1024];
             size_t payload_size;
             printf("Found player\n");
-            payload_size = server_client_protocol_write_game_stopped((char *)buffer, 1, "");
+            payload_size = server_client_protocol_write_game_stopped(buffer, 1, "");
             for(int k=0; k<rooms[i].game.nb_players + rooms[i].game.nb_spectators; ++k) {
                 if(k != j) {
                     printf("On envoie !\n");
