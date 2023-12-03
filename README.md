@@ -8,7 +8,7 @@
 
 ## Lancer le jeu
 
-Lancer le serveur `./srv.out` puis le client `./cli <adresse-ip-du-serveur>`
+Lancer le serveur `./srv.out` puis le client `./cli.out <adresse-ip-du-serveur>`
 
 ## Utiliser le client
 
@@ -36,8 +36,8 @@ Vous pouvez donner une biographie afin que les gens en sachent plus sur vous qua
 
 Lorsqu'il n'y a pas encore deux joueurs, les spectateurs peuvent échanger des messages entre eux ou avec le joueur en attente d'un adversaire.
 
-Lorsque la partie commence, les joueurs doivent saisir tour à tour leurs coups, ils peuvent envoyer des messages ce qu'ils saisissent qui n'est pas un nombre est considéré comme un message.
-Les spectateurs peuvent continuer à envoyer des messages.
+Lorsque la partie commence, les joueurs doivent saisir tour à tour leurs coups en entrant la position. Les joueurs peuvent toujours envoyer des messages : si ce qu'ils saisissent n'est pas un nombre alors c'est considéré comme un message.
+Les spectateurs peuvent aussi continuer à envoyer des messages.
 
-Vous pouvez égaliement quitter le salon en entrant `/quit`.
+Vous pouvez également quitter le salon en entrant `/leave`.
 Quitter un salon en tant que joueur ferme le salon (pas en tant que spectateur).
