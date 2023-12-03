@@ -22,7 +22,7 @@ CLI-HEADERS = $(wildcard $(CLI-INCLUDE-DIR)/*.h)
 
 # Commands
 CC = gcc
-CCFLAGS = -pedantic -Wall -Wextra -MD
+CCFLAGS = -pedantic -Wall -Wextra -MD -O3
 LDFLAGS = 
 DEBUGFLAGS = -DMAP -g
 RM = rm -f

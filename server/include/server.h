@@ -22,7 +22,7 @@
 
 #include "client.h"
 #include "socket.h"
-#define MAX_ROOMS 2048
+#define MAX_ROOMS 200
 
 static void init(void);
 static void end(void);
