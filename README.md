@@ -8,7 +8,7 @@
 
 ## Lancer le jeu
 
-Lancer le serveur `./srv.out` puis le client `./cli <id-du-serveur>`
+Lancer le serveur `./srv.out` puis le client `./cli <adresse-ip-du-serveur>`
 
 ## Utiliser le client
 
@@ -20,7 +20,7 @@ Vous avez ensuite plusieurs choix.
 
 Le jeu vous donne un code que vous pouvez partager pour inviter vos amis, puis vous place dans le salon en attendant l'arrivée d'autres personnes.
 
-### Rejoundre un salon
+### Rejoindre un salon
 
 Si un ami vous a partagé le code d'un salon, pous pouvez le rejoindre en saisissant le code, s'il y a déja deux joueurs dans le salon, vous ne pourrez pas le rejoindre en tant que joueur, essayez de le rejoindre en tant que spectateur.
 
@@ -30,7 +30,7 @@ Pour observer une partie dans un salon, saisissez le code de ce salon.
 
 ### Saisir votre biographie
 
-Vous pouvez donner une biographie afin que les gens en sachent plus sur vous quand ils rejoignent une partie dans laquelle vous êtes 
+Vous pouvez donner une biographie afin que les gens en sachent plus sur vous quand ils rejoignent une partie dans laquelle vous êtes.
 
 ### Déroulement d'un salon
 
