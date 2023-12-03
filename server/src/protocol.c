@@ -70,6 +70,7 @@ void handle_connect(const char *name) {
         payload_size = server_client_protocol_write_connection_refused(
             buffer, "Error: Name already in use.");
     } else {
+        strcpy(clients[current_client].name, name);
         fprintf(
             stderr,
             "client_server_protocol_connect name (%s, length %lu) available\n",
@@ -79,7 +80,28 @@ void handle_connect(const char *name) {
             for (int j = 0; j < rooms[i].game.nb_players; ++j) {
                 if (strcmp(name, rooms[i].game.players[j].name) == 0) {
                     rooms[i].game.players[j].id = clients[current_client].sock;
-                    if (rooms[i].game.turn == j) {
+                    if(!rooms[i].game.is_started) {
+                        clients[current_client].room_id = rooms[i].id;
+                        const char *player_names[MAX_GAME_PLAYERS];
+                        const char *player_bios[2];
+
+                        for (int k = 0; k < rooms[i].game.nb_players; ++k) {
+                            player_names[k] = rooms[i].game.players[k].name;
+                            player_bios[k] =
+                                clients[rooms[i].game.players[k].client_index].biography;
+                            fprintf(stderr, "BIO : %s \n", player_bios[k]);
+                        }
+
+                        for (int k = 0; k < rooms[i].game.nb_spectators; ++k) {
+                            player_names[rooms[i].game.nb_players + k] =
+                                rooms[i].game.players[2 + k].name;
+                        }
+                        payload_size = server_client_protocol_write_join_room_successful(
+                            buffer, player_names, rooms[i].game.nb_players,
+                            rooms[i].game.nb_spectators, player_bios);
+                        write_client(clients[current_client].sock, (char *)buffer,
+                                     payload_size);
+                    } else if (rooms[i].game.turn == j) {
                         clients[current_client].room_id = rooms[i].id;
                         payload_size = server_client_protocol_write_played(
                             buffer, j, &rooms[i].game);
@@ -98,7 +120,6 @@ void handle_connect(const char *name) {
         }
 
         // user wasn't disconnected
-        strcpy(clients[current_client].name, name);
         payload_size =
             server_client_protocol_write_connection_successful(buffer);
     }

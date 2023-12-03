@@ -164,7 +164,11 @@ void handle_join_room_successful(State *state, uint8_t nb_users,
                                  uint8_t nb_spectators, const char **users,
                                  const char **bios, const char **spectators) {
     if (*state == WAITING_JOIN_ROOM_RESPONSE ||
-        *state == WAITING_SPECTATE_ROOM_RESPONSE) {
+        *state == WAITING_SPECTATE_ROOM_RESPONSE ||
+        *state == WAITING_CONNECTION) {
+        if(*state == WAITING_CONNECTION) {
+            printf("Joined back room, to leave room, type '/leave'\n");
+        }
         printf("Room joined\nUsers in room : \n");
         for (uint8_t i = 0; i < nb_users; ++i) {
             printf(" - %s : %s\n", users[i], bios[i]);
@@ -174,7 +178,7 @@ void handle_join_room_successful(State *state, uint8_t nb_users,
             printf(" - %s\n", spectators[i]);
         }
         printf("\n");
-        if (*state == WAITING_JOIN_ROOM_RESPONSE) {
+        if (*state == WAITING_JOIN_ROOM_RESPONSE || *state == WAITING_CONNECTION) {
             set_current_state(state, IN_ROOM);
         } else {
             set_current_state(state, SPECTATING);
