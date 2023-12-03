@@ -41,7 +41,7 @@ void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {
 
     char *score="Score: ";
 
-    char buf[3];
+    char buf[4];
     
     int col_size = 3;
     int col_nb = 6;
@@ -59,10 +59,10 @@ void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {
 
     // First Score
     
-    snprintf(buf, 2, "%d", o_score);
+    snprintf(buf, 4, "%d", o_score);
     printf("│");
     printf("%s%s", score, buf);
-    for(int i=0; i<total-2-strlen(score)-strlen(buf); ++i) {
+    for(size_t i=0; i<total-2-strlen(score)-strlen(buf); ++i) {
         printf(" ");
     }
     printf("│\n");
@@ -85,8 +85,8 @@ void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {
 
     printf("│");
     for(int i=col_nb-1; i>=0; --i) {
-        snprintf(buf, 2, "%d", board[i+col_nb]);
-        for(int j=0; j<col_size-1-strlen(buf); j++) {
+        snprintf(buf, 4, "%d", board[i+col_nb]);
+        for(size_t j=0; j<col_size-1-strlen(buf); j++) {
             printf(" ");
         }
         printf("%s │", buf);
@@ -111,8 +111,8 @@ void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {
     
     printf("│");
     for(int i=0; i<col_nb; ++i) {
-        snprintf(buf, 2, "%d", board[i]);
-        for(int j=0; j<col_size-1-strlen(buf); j++) {
+        snprintf(buf, 4, "%d", board[i]);
+        for(size_t j=0; j<col_size-1-strlen(buf); j++) {
             printf(" ");
         }
         printf("%s │", buf);
@@ -134,10 +134,10 @@ void action_show_board(uint8_t s_score, uint8_t o_score, uint8_t *board) {
 
     // Second score line
     
-    snprintf(buf, 2, "%d", s_score);
+    snprintf(buf, 4, "%d", s_score);
     printf("│");
     printf("%s%s", score, buf);
-    for(int i=0; i<total-2-strlen(score)-strlen(buf); ++i) {
+    for(size_t i=0; i<total-2-strlen(score)-strlen(buf); ++i) {
         printf(" ");
     }
     printf("│\n");
