@@ -108,13 +108,13 @@ static void app(void) {
                     /* client disconnected */
                     if (c == 0) {
                         closesocket(clients[i].sock);
+                        disconnect_user();
                         remove_client(clients, i, &nb_clients);
                         fprintf(stderr, "TEST %s disconnected\n",
                                 clients[current_client].name);
                         strncpy(buffer, client.name, BUF_SIZE);
                         strncat(buffer, " disconnected !",
                                 BUF_SIZE - strlen(buffer) - 1);
-                        disconnect_user();
                         // send_message_to_all_clients(clients, client,
                         // nb_clients,
                         //                             buffer, 1);
