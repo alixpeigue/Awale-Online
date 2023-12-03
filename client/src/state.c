@@ -37,6 +37,11 @@ void set_current_state(State *state, State new_state) {
 }
 
 void handle_user_input(State *state, const char *in) {
+    // ignore EOF
+    if(in[0] == EOF) {
+        return;
+    }
+    
     uint8_t buf[1024];
     size_t size;
     switch (*state) {
@@ -90,7 +95,7 @@ void handle_user_input(State *state, const char *in) {
             size = server_client_protocol_write_play(buf, pos);
             write_server((char *)buf, size);
             set_current_state(state, WAITING_PLAY_ACK);
-        } if (strcmp(in, "/leave")) {
+        } else if (strcmp(in, "/leave") == 0) {
             size = server_client_protocol_write_leave_room(buf);
             write_server((char *)buf, size);
             printf("Room left !\n");
@@ -105,7 +110,7 @@ void handle_user_input(State *state, const char *in) {
     case IN_ROOM:
     case SPECTATING:
     case IN_GAME: {
-        if (strcmp(in, "/leave")) {
+        if (strcmp(in, "/leave") == 0) {
             size = server_client_protocol_write_leave_room(buf);
             write_server((char *)buf, size);
             printf("Room left !\n");
@@ -185,6 +190,10 @@ void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *boar
     } else if (*state == WAITING_PLAY_ACK) {
         action_show_board(s_score, o_score, board);
         set_current_state(state, IN_GAME);
+    } else if (*state == WAITING_CONNECTION) {
+        printf("Joined back room, to leave room, type '/leave'\n");
+        action_show_board(s_score, o_score, board);
+        set_current_state(state, WAITING_PLAY_INPUT);
     }
 }
 
@@ -197,6 +206,9 @@ void handle_game_start(State *state, uint8_t pos) {
         } else if (pos==1) {
             set_current_state(state, IN_GAME);
         }
+    } else if (*state == WAITING_CONNECTION) {
+        printf("Joined back room, to leave room, type '/leave'\nWaiting for other player's input\n");
+        set_current_state(state, IN_GAME);
     }
 }
 

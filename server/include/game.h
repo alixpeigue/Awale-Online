@@ -24,6 +24,7 @@ typedef struct {
     int nb_spectators;
     Player players[MAX_GAME_PLAYERS];
     int is_started;
+    int turn;
 } Game;
 
 void game_init(Game *game);

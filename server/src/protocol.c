@@ -75,6 +75,27 @@ void handle_connect(const char *name) {
             stderr,
             "client_server_protocol_connect name (%s, length %lu) available\n",
             name, strlen(name));
+
+        for(int i=0; i<nb_rooms; ++i) {
+            for(int j=0; j<rooms[i].game.nb_players; ++j) {
+                if(strcmp(name, rooms[i].game.players[j].name) == 0) {
+                    rooms[i].game.players[j].id = clients[current_client].sock;
+                    printf("Turn %d\n", rooms[i].game.turn);
+                    if(rooms[i].game.turn == j) {
+                        clients[current_client].room_id = rooms[i].id;
+                        payload_size = server_client_protocol_write_played(buffer, j, &rooms[i].game);
+                        write_client(clients[current_client].sock, (char *)buffer, payload_size);
+                    } else {
+                        clients[current_client].room_id = rooms[i].id;
+                        payload_size = server_client_protocol_write_game_start(buffer, 1);
+                        write_client(clients[current_client].sock, (char *)buffer, payload_size);
+                    }
+                    return;
+                }
+            }
+        }
+
+        // user wasn't disconnected
         strcpy(clients[current_client].name, name);
         payload_size =
             server_client_protocol_write_connection_successful(buffer);
@@ -194,7 +215,7 @@ void handle_play(uint8_t play) {
                 for (int j = 0; j < rooms[i].game.nb_spectators; ++j) {
                     payload_size = server_client_protocol_write_played(
                             buffer, 0, &rooms[i].game);
-                     write_client(rooms[i].game.players[2 + j].id, (char *)buffer,
+                    write_client(rooms[i].game.players[2 + j].id, (char *)buffer,
                             payload_size);
                 }
             } else {
@@ -214,6 +235,7 @@ void handle_play(uint8_t play) {
             }
             GameState gs = game_is_ended(&rooms[i].game);
             if (gs != NOT_ENDED) {
+                // print("Game ended...");
                 uint8_t draw = gs == DRAW;
                 const char *winner;
                 if (!draw) {
@@ -234,6 +256,7 @@ void handle_play(uint8_t play) {
 void handle_leave_room(void) {
     printf("Ca envoie ! %d\n", current_client);
     uint32_t room_id = clients[current_client].room_id;
+    clients[current_client].room_id = 0;
 
     int i;
     for(i=0; i<nb_rooms; ++i) {
