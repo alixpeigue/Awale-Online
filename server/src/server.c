@@ -111,7 +111,7 @@ static void app(void) {
                         remove_client(clients, i, &nb_clients);
                         fprintf(stderr, "TEST %s disconnected\n",
                                 clients[current_client].name);
-                        strncpy(buffer, client.name, BUF_SIZE - 1);
+                        strncpy(buffer, client.name, BUF_SIZE);
                         strncat(buffer, " disconnected !",
                                 BUF_SIZE - strlen(buffer) - 1);
                         disconnect_user();
