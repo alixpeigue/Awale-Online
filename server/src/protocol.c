@@ -36,7 +36,6 @@ size_t client_server_protocol_read(const uint8_t *buf,
         handlers->play(pos);
     } break;
     case LEAVE_ROOM: {
-        printf("Leave room\n");
         handlers->leave_room();
     } break;
     case SEND_MESSAGE: {
@@ -80,7 +79,6 @@ void handle_connect(const char *name) {
             for(int j=0; j<rooms[i].game.nb_players; ++j) {
                 if(strcmp(name, rooms[i].game.players[j].name) == 0) {
                     rooms[i].game.players[j].id = clients[current_client].sock;
-                    printf("Turn %d\n", rooms[i].game.turn);
                     if(rooms[i].game.turn == j) {
                         clients[current_client].room_id = rooms[i].id;
                         payload_size = server_client_protocol_write_played(buffer, j, &rooms[i].game);
@@ -157,7 +155,7 @@ void handle_join_room(uint32_t room_id, uint8_t spectate) {
             player_names[j] = rooms[i].game.players[j].name;
             player_bios[j] =
                 clients[rooms[i].game.players[j].client_index].biography;
-            printf("BIO : %s \n", player_bios[j]);
+            fprintf(stderr, "BIO : %s \n", player_bios[j]);
         }
 
         for (int j = 0; j < rooms[i].game.nb_spectators; ++j) {
@@ -259,7 +257,6 @@ void handle_play(uint8_t play) {
 }
 
 void handle_leave_room(void) {
-    printf("Ca envoie ! %d\n", current_client);
     uint32_t room_id = clients[current_client].room_id;
     clients[current_client].room_id = 0;
 
@@ -270,19 +267,15 @@ void handle_leave_room(void) {
         }
     }
 
-    printf("i = %d\n", i);
 
     for(int j=0; j<rooms[i].game.nb_players; ++j) {
-        printf("%d\n", rooms[i].game.players[j].id);
         if(rooms[i].game.players[j].id == clients[current_client].sock) {
             // A player is leaving, close room
             uint8_t buffer[1024];
             size_t payload_size;
-            printf("Found player\n");
             payload_size = server_client_protocol_write_game_stopped(buffer, 1, "");
             for(int k=0; k<rooms[i].game.nb_players + rooms[i].game.nb_spectators; ++k) {
                 if(k != j) {
-                    printf("On envoie !\n");
                     write_client(rooms[i].game.players[k].id, (char *)buffer, payload_size);
                 }
             }
@@ -343,6 +336,26 @@ void handle_send_message(const char *message) {
 
 void handle_set_biography(const char *biography) {
     strcpy(clients[current_client].biography, biography);
+}
+
+void disconnect_user() {
+    for(int i=0; i<nb_rooms; ++i) {
+        if(clients[current_client].room_id == rooms[i].id) {
+            for(int j=0; j<rooms[i].game.nb_players; ++j) {
+                if(rooms[i].game.players[j].id == clients[current_client].sock) {
+                    rooms[i].game.players[j].id = -1;
+                    return;
+                }
+            }
+            for(int j=0; j<rooms[i].game.nb_spectators; ++j) {
+                if(rooms[j].game.players[2+j].id == clients[current_client].sock) {
+                    // remove spectator from game
+                    rooms[i].game.players[j+2] = rooms[i].game.players[rooms[i].game.nb_spectators-1];
+                    --rooms[i].game.nb_spectators;
+                }
+            }
+        }
+    }
 }
 
 size_t server_client_protocol_write_connection_successful(uint8_t *buf) {

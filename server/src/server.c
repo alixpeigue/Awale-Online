@@ -114,6 +114,7 @@ static void app(void) {
                         strncpy(buffer, client.name, BUF_SIZE - 1);
                         strncat(buffer, " disconnected !",
                                 BUF_SIZE - strlen(buffer) - 1);
+                        disconnect_user();
                         // send_message_to_all_clients(clients, client,
                         // nb_clients,
                         //                             buffer, 1);
@@ -225,9 +226,11 @@ static int read_client(SOCKET sock, char *buffer) {
 }
 
 void write_client(SOCKET sock, const char *buffer, int size) {
-    if (send(sock, buffer, size, 0) < 0) {
-        perror("send()");
-        exit(errno);
+    if(sock != -1) {
+        if (send(sock, buffer, size, 0) < 0) {
+            perror("send()");
+            exit(errno);
+        }
     }
 }
 

@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
         printf("Usage : %s [address] \n", argv[0]);
         return EXIT_FAILURE;
     }
-    printf("Bienvenue sur le jeu d'awale !\n");
+    printf("Welcome in Awale Online !\nYou can quit at any moment by typing /close\n");
 
     app(argv[1]);  
 }

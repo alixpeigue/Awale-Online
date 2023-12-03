@@ -12,7 +12,7 @@ typedef enum { NOT_ENDED, P1WON, P2WON, DRAW } GameState;
 typedef enum { VALID_PLAY, OUT_OF_BOUNDS, EMPTY_HOUSE } PlayResult;
 
 typedef struct {
-    uint32_t id;
+    int id;
     char name[1024];
     int8_t captured;
     int client_index;

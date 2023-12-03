@@ -46,4 +46,5 @@ size_t server_client_protocol_write_game_stopped(uint8_t *buf, uint8_t draw,
 size_t server_client_protocol_write_send_message_to_room(uint8_t *buf,
                                                          const char *username,
                                                          const char *message);
+void disconnect_user();
 #endif

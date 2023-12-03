@@ -10,7 +10,6 @@
 
 void set_current_state(State *state, State new_state) {
     *state = new_state;
-    fprintf(stderr, "New state: %d\n", new_state);
     switch (new_state) {
     case CONNECTING:
         action_connect();
@@ -33,6 +32,9 @@ void set_current_state(State *state, State new_state) {
     case WAITING_BIO_INPUT:
         action_bio();
         break;
+    default:
+        // do nothing
+        break;
     }
 }
 
@@ -41,12 +43,16 @@ void handle_user_input(State *state, const char *in) {
     if(in[0] == EOF) {
         return;
     }
+
+    if(strcmp("/close", in) == 0) {
+        printf("Goodbye !\n");
+        exit(EXIT_SUCCESS);
+    }
     
     uint8_t buf[1024];
     size_t size;
     switch (*state) {
     case CONNECTING: {
-        fprintf(stderr, "Types %s\n", in);
         size = server_client_protocol_write_connect(buf, in);
         write_server((char *)buf, size);
         set_current_state(state, WAITING_CONNECTION);
@@ -248,3 +254,4 @@ void handle_invalid_play(State *state, const char *message) {
         set_current_state(state, WAITING_PLAY_INPUT);
     }
 }
+
