@@ -10,6 +10,10 @@
 
 Lancer le serveur `./srv.out` puis le client `./cli.out <adresse-ip-du-serveur>`
 
+## Quitter
+
+A tout moment, vous pouvez saisir `/close` pour fermer le client.
+
 ## Utiliser le client
 
 A la connexion, le client demande votre nom d'utilisateur, c'est ce qui vous identifie auprès du serveur et des autres personnes.
