@@ -39,3 +39,5 @@ Lorsqu'il n'y a pas encore deux joueurs, les spectateurs peuvent échanger des m
 Lorsque la partie commence, les joueurs doivent saisir tour à tour leurs coups, ils peuvent envoyer des messages ce qu'ils saisissent qui n'est pas un nombre est considéré comme un message.
 Les spectateurs peuvent continuer à envoyer des messages.
 
+Vous pouvez égaliement quitter le salon en entrant `/quit`.
+Quitter un salon en tant que joueur ferme le salon (pas en tant que spectateur).

@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 
 void set_current_state(State *state, State new_state) {
@@ -89,6 +90,11 @@ void handle_user_input(State *state, const char *in) {
             size = server_client_protocol_write_play(buf, pos);
             write_server((char *)buf, size);
             set_current_state(state, WAITING_PLAY_ACK);
+        } if (strcmp(in, "/leave")) {
+            size = server_client_protocol_write_leave_room(buf);
+            write_server((char *)buf, size);
+            printf("Room left !\n");
+            set_current_state(state, CONNECTED);
         } else {
             size = server_client_protocol_write_send_message(buf, in);
             write_server((char *)buf, size);
@@ -99,9 +105,16 @@ void handle_user_input(State *state, const char *in) {
     case IN_ROOM:
     case SPECTATING:
     case IN_GAME: {
-        size = server_client_protocol_write_send_message(buf, in);
-        write_server((char*)buf, size);
-        
+        if (strcmp(in, "/leave")) {
+            size = server_client_protocol_write_leave_room(buf);
+            write_server((char *)buf, size);
+            printf("Room left !\n");
+            set_current_state(state, CONNECTED);
+        } else {
+            size = server_client_protocol_write_send_message(buf, in);
+            write_server((char *)buf, size);
+            printf("Message Sent\n");
+        }      
     } break;
     default:
         printf("Input ignored\n");

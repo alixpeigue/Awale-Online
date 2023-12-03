@@ -36,6 +36,7 @@ size_t client_server_protocol_read(const uint8_t *buf,
         handlers->play(pos);
     } break;
     case LEAVE_ROOM: {
+        printf("Leave room\n");
         handlers->leave_room();
     } break;
     case SEND_MESSAGE: {
@@ -230,7 +231,57 @@ void handle_play(uint8_t play) {
     }
 }
 
-void handle_leave_room(void) {}
+void handle_leave_room(void) {
+    printf("Ca envoie ! %d\n", current_client);
+    uint32_t room_id = clients[current_client].room_id;
+
+    int i;
+    for(i=0; i<nb_rooms; ++i) {
+        if (rooms[i].id == room_id) {
+            break;
+        }
+    }
+
+    printf("i = %d\n", i);
+
+    for(int j=0; j<rooms[i].game.nb_players; ++j) {
+        printf("%d\n", rooms[i].game.players[j].id);
+        if(rooms[i].game.players[j].id == clients[current_client].sock) {
+            // A player is leaving, close room
+            uint8_t buffer[1024];
+            size_t payload_size;
+            printf("Found player\n");
+            payload_size = server_client_protocol_write_game_stopped((char *)buffer, 1, "");
+            for(int k=0; k<rooms[i].game.nb_players + rooms[i].game.nb_spectators; ++k) {
+                if(k != j) {
+                    printf("On envoie !\n");
+                    write_client(rooms[i].game.players[k].id, (char *)buffer, payload_size);
+                }
+            }
+
+            //Delete room from rooms list
+            --nb_rooms;
+            for(int k=i; k<nb_rooms; ++k) {
+                rooms[k] = rooms[k+1];
+            }
+
+            return;
+        }
+    }
+
+    // If not player, then spectator : delete from spectators list
+
+    for(int j=0; j<rooms[i].game.nb_spectators; ++j) {
+        if(rooms[i].game.players[j+2].id == clients[current_client].sock) {
+            // remove spectator from game
+            rooms[i].game.players[j+2] = rooms[i].game.players[rooms[i].game.nb_spectators-1];
+            --rooms[i].game.nb_spectators;
+            return;
+        }
+    }
+
+    
+}
 
 void handle_send_message(const char *message) {
     uint32_t room_id = clients[current_client].room_id;
