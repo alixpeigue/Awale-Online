@@ -33,12 +33,14 @@ void handle_room_creation_successful(State *state, uint32_t room_id);
 
 void handle_room_creation_refused(State *state, const char *error_message);
 
-void handle_join_room_successful(State *state, uint8_t nb_users, uint8_t nb_spectators,
-                                 const char **users, const char **bios, const char **spectators);
+void handle_join_room_successful(State *state, uint8_t nb_users,
+                                 uint8_t nb_spectators, const char **users,
+                                 const char **bios, const char **spectators);
 
 void handle_join_room_refused(State *state, const char *error_message);
 
-void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *board);
+void handle_played(State *state, uint8_t s_score, uint8_t o_score,
+                   uint8_t *board);
 
 void handle_game_start(State *state, uint8_t pos);
 
@@ -51,6 +53,5 @@ void handle_game_stopped(State *state, uint8_t draw, const char *winner);
 void handle_message(State *state, const char *username, const char *message);
 
 void handle_invalid_play(State *state, const char *message);
-
 
 #endif

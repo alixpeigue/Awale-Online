@@ -40,9 +40,10 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
         }
         for (uint32_t i = 0; i < nb_spectators; ++i) {
             spectators[i] = str;
-            str += strlen(str)+1;
+            str += strlen(str) + 1;
         }
-        handlers->join_room_successful(state, nb_users, nb_spectators, users, bios, spectators);
+        handlers->join_room_successful(state, nb_users, nb_spectators, users,
+                                       bios, spectators);
     } break;
     case JOIN_ROOM_REFUSED: {
         const char *message = (const char *)&buf[1];
@@ -68,16 +69,16 @@ size_t server_client_protocol_read(const uint8_t *buf, const Handlers *handlers,
     } break;
     case GAME_STOPPED: {
         uint8_t draw = buf[1];
-        const char * winner = (char *)&buf[2];
+        const char *winner = (char *)&buf[2];
         handlers->game_stopped(state, draw, winner);
     } break;
     case MESSAGE: {
-        const char* username = (char *)&buf[1];
-        const char* message = (char *)&buf[2+strlen(username)];
+        const char *username = (char *)&buf[1];
+        const char *message = (char *)&buf[2 + strlen(username)];
         handlers->message(state, username, message);
     } break;
     case INVALID_PLAY: {
-        const char * message = (char *)&buf[1];
+        const char *message = (char *)&buf[1];
         handlers->invalid_play(state, message);
     } break;
     }
@@ -99,7 +100,8 @@ size_t server_client_protocol_write_create_room(uint8_t *buf) {
     return size + 2;
 }
 
-size_t server_client_protocol_write_join_room(uint8_t *buf, uint32_t room_id, uint8_t spectate) {
+size_t server_client_protocol_write_join_room(uint8_t *buf, uint32_t room_id,
+                                              uint8_t spectate) {
     uint16_t size = sizeof(room_id) + sizeof(spectate) + 1;
     *(uint16_t *)&buf[0] = size;
     buf[2] = JOIN_ROOM;
@@ -123,7 +125,8 @@ size_t server_client_protocol_write_play(uint8_t *buf, uint8_t pos) {
     return size + 2;
 }
 
-size_t server_client_protocol_write_send_message(uint8_t *buf, const char *message) {
+size_t server_client_protocol_write_send_message(uint8_t *buf,
+                                                 const char *message) {
     uint16_t size = 2 + strlen(message);
     *(uint16_t *)&buf[0] = size;
     buf[2] = SEND_MESSAGE;
@@ -131,7 +134,8 @@ size_t server_client_protocol_write_send_message(uint8_t *buf, const char *messa
     return size + 2;
 }
 
-size_t server_client_protocol_write_set_biography(uint8_t *buf, const char *bio) {
+size_t server_client_protocol_write_set_biography(uint8_t *buf,
+                                                  const char *bio) {
     uint16_t size = 2 + strlen(bio);
     *(uint16_t *)&buf[0] = size;
     buf[2] = SET_BIOGRAPHY;

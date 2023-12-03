@@ -42,7 +42,7 @@ int game_board_can_capture(const uint8_t *board, int opposite_side,
         return capturable;
     }
 
-    for (int i = BOARD_SIZE/2 + offset; i >= offset; --i) {
+    for (int i = BOARD_SIZE / 2 + offset; i >= offset; --i) {
         if (board[i] != 0 && board[i] != 2 && board[i] != 3) {
             capturable = 1;
             break;

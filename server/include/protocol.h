@@ -28,9 +28,9 @@ size_t server_client_protocol_write_room_creation_successful(uint8_t *buf,
 size_t
 server_client_protocol_write_room_creation_refused(uint8_t *buf,
                                                    const char *error_message);
-size_t server_client_protocol_write_join_room_successful(uint8_t *buf,
-                                                         const char **users,
-                                                         uint8_t nb_users, uint8_t nb_spectators, const char **player_bios);
+size_t server_client_protocol_write_join_room_successful(
+    uint8_t *buf, const char **users, uint8_t nb_users, uint8_t nb_spectators,
+    const char **player_bios);
 size_t
 server_client_protocol_write_join_room_refused(uint8_t *buf,
                                                const char *error_message);

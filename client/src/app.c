@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-void app(char* address) {
-    
+void app(char *address) {
+
     Handlers handlers;
     handlers.connection_successful = &handle_connection_successful;
     handlers.connection_refused = &handle_connection_refused;
@@ -61,14 +61,14 @@ void app(char* address) {
             handle_user_input(&state, buffer);
         } else if (FD_ISSET(sock, &rdfs)) {
             int n = read_server(buffer, 2);
-            uint16_t to_read = *(uint16_t *) buffer;
+            uint16_t to_read = *(uint16_t *)buffer;
             int m = read_server(buffer, to_read);
             /* server down */
             if (n == 0 || m == 0) {
                 printf("Server disconnected !\n");
                 break;
             }
-            server_client_protocol_read((uint8_t *) buffer, &handlers, &state);
+            server_client_protocol_read((uint8_t *)buffer, &handlers, &state);
         }
     }
 
@@ -79,7 +79,8 @@ int main(int argc, char **argv) {
         printf("Usage : %s [address] \n", argv[0]);
         return EXIT_FAILURE;
     }
-    printf("Welcome in Awale Online !\nYou can quit at any moment by typing /close\n");
+    printf("Welcome in Awale Online !\nYou can quit at any moment by typing "
+           "/close\n");
 
-    app(argv[1]);  
+    app(argv[1]);
 }

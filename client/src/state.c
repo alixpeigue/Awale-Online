@@ -40,15 +40,15 @@ void set_current_state(State *state, State new_state) {
 
 void handle_user_input(State *state, const char *in) {
     // ignore EOF
-    if(in[0] == EOF) {
+    if (in[0] == EOF) {
         return;
     }
 
-    if(strcmp("/close", in) == 0) {
+    if (strcmp("/close", in) == 0) {
         printf("Goodbye !\n");
         exit(EXIT_SUCCESS);
     }
-    
+
     uint8_t buf[1024];
     size_t size;
     switch (*state) {
@@ -95,9 +95,9 @@ void handle_user_input(State *state, const char *in) {
         set_current_state(state, CONNECTED);
     } break;
     case WAITING_PLAY_INPUT: {
-        char * endptr;
-        uint8_t pos = strtol(in, &endptr ,10) - 1;
-        if(*endptr == '\0') { // input is valid pos
+        char *endptr;
+        uint8_t pos = strtol(in, &endptr, 10) - 1;
+        if (*endptr == '\0') { // input is valid pos
             size = server_client_protocol_write_play(buf, pos);
             write_server((char *)buf, size);
             set_current_state(state, WAITING_PLAY_ACK);
@@ -125,11 +125,11 @@ void handle_user_input(State *state, const char *in) {
             size = server_client_protocol_write_send_message(buf, in);
             write_server((char *)buf, size);
             printf("Message Sent\n");
-        }      
+        }
     } break;
     default:
         printf("Input ignored\n");
-    }    
+    }
 }
 
 void handle_connection_successful(State *state) {
@@ -160,15 +160,17 @@ void handle_room_creation_refused(State *state, const char *error_message) {
     }
 }
 
-void handle_join_room_successful(State *state, uint8_t nb_users, uint8_t nb_spectators,
-                                 const char **users, const char **bios, const char **spectators) {
-    if (*state == WAITING_JOIN_ROOM_RESPONSE || *state == WAITING_SPECTATE_ROOM_RESPONSE) {
+void handle_join_room_successful(State *state, uint8_t nb_users,
+                                 uint8_t nb_spectators, const char **users,
+                                 const char **bios, const char **spectators) {
+    if (*state == WAITING_JOIN_ROOM_RESPONSE ||
+        *state == WAITING_SPECTATE_ROOM_RESPONSE) {
         printf("Room joined\nUsers in room : \n");
         for (uint8_t i = 0; i < nb_users; ++i) {
             printf(" - %s : %s\n", users[i], bios[i]);
         }
         printf("Spectators in room :\n");
-        for (uint8_t i = 0; i<nb_spectators; ++i) {
+        for (uint8_t i = 0; i < nb_spectators; ++i) {
             printf(" - %s\n", spectators[i]);
         }
         printf("\n");
@@ -187,7 +189,8 @@ void handle_join_room_refused(State *state, const char *error_message) {
     }
 }
 
-void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *board) {
+void handle_played(State *state, uint8_t s_score, uint8_t o_score,
+                   uint8_t *board) {
     if (*state == IN_GAME) {
         action_show_board(s_score, o_score, board);
         set_current_state(state, WAITING_PLAY_INPUT);
@@ -204,16 +207,17 @@ void handle_played(State *state, uint8_t s_score, uint8_t o_score, uint8_t *boar
 }
 
 void handle_game_start(State *state, uint8_t pos) {
-    printf("Game starting !\n"); 
+    printf("Game starting !\n");
     if (*state == IN_ROOM) {
         printf("You start at position %d\n", pos);
-        if(pos==0) {
+        if (pos == 0) {
             set_current_state(state, WAITING_PLAY_INPUT);
-        } else if (pos==1) {
+        } else if (pos == 1) {
             set_current_state(state, IN_GAME);
         }
     } else if (*state == WAITING_CONNECTION) {
-        printf("Joined back room, to leave room, type '/leave'\nWaiting for other player's input\n");
+        printf("Joined back room, to leave room, type '/leave'\nWaiting for "
+               "other player's input\n");
         set_current_state(state, IN_GAME);
     }
 }
@@ -231,7 +235,8 @@ void handle_spectator_joined_room(State *state, const char *username) {
 }
 
 void handle_game_stopped(State *state, uint8_t draw, const char *winner) {
-    if (*state == IN_GAME || *state == SPECTATING || *state == IN_ROOM || *state == WAITING_PLAY_INPUT) {
+    if (*state == IN_GAME || *state == SPECTATING || *state == IN_ROOM ||
+        *state == WAITING_PLAY_INPUT) {
         if (!draw) {
             printf("Game ended ! %s won !\n", winner);
         } else {
@@ -242,11 +247,11 @@ void handle_game_stopped(State *state, uint8_t draw, const char *winner) {
 }
 
 void handle_message(State *state, const char *username, const char *message) {
-    if (*state == IN_ROOM || *state == SPECTATING || *state == IN_GAME || *state == WAITING_PLAY_INPUT || *state == WAITING_PLAY_ACK) {
+    if (*state == IN_ROOM || *state == SPECTATING || *state == IN_GAME ||
+        *state == WAITING_PLAY_INPUT || *state == WAITING_PLAY_ACK) {
         printf("(%s) %s\n", username, message);
     }
 }
-
 
 void handle_invalid_play(State *state, const char *message) {
     if (*state == WAITING_PLAY_ACK) {
@@ -254,4 +259,3 @@ void handle_invalid_play(State *state, const char *message) {
         set_current_state(state, WAITING_PLAY_INPUT);
     }
 }
-

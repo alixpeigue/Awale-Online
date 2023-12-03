@@ -226,7 +226,7 @@ static int read_client(SOCKET sock, char *buffer) {
 }
 
 void write_client(SOCKET sock, const char *buffer, int size) {
-    if(sock != -1) {
+    if (sock != -1) {
         if (send(sock, buffer, size, 0) < 0) {
             perror("send()");
             exit(errno);
